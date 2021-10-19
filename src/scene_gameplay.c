@@ -1,6 +1,10 @@
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 #include "defs.h"
 #include "raylib.h"
 #include "raymath.h"
+#include <math.h>
 
 // Local types
 
@@ -54,7 +58,6 @@ void scene_gameplay_init()
     Vector2 v = (Vector2){BALL_SPEED, 0};
     float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
     ball.velocity = Vector2Rotate(v, angle);
-     
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -111,14 +114,38 @@ void ball_update(float deltaTime)
     {
         if (CheckCollisionRecs(ball.bounds, paddle1.bounds))
         {
+            int distToCenter = (paddle1.bounds.y + paddle1.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
+
             ball.bounds.x = paddle1.bounds.x + paddle1.bounds.width;
             ball.velocity.x *= -1;
+
+            float angle1 = (-PADDLE_MAX_ANGLE * DEG2RAD * distToCenter) / (paddle1.bounds.height / 2);
+            bool isGoingUp = (ball.velocity.y < 0);
+
+            ball.velocity = Vector2Rotate(ball.velocity, angle1);
+            float angle2 = atan2f(ball.velocity.y, ball.velocity.x) * RAD2DEG;
+            if (angle2 > BALL_MAX_ANGLE || angle2 < -BALL_MAX_ANGLE)
+            {
+                float angle = BALL_MAX_ANGLE * DEG2RAD;
+                if (isGoingUp)
+                {
+                    angle *= -1;
+                }
+                ball.velocity.x = cosf(angle) * BALL_SPEED;
+                ball.velocity.y = sinf(angle) * BALL_SPEED;
+            }
         }
-        if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
+
+        if (ball.bounds.x > 630)
+        {
+            ball.bounds.x -= 2;
+            ball.velocity.x *= -1;
+        }
+        /*if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
         {
             ball.bounds.x = paddle2.bounds.x - paddle2.bounds.width;
             ball.velocity.x *= -1;
-        }
+        }*/
     }
 }
 

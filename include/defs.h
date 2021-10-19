@@ -6,11 +6,15 @@
 #define SCREEN_WIDTH 640          // px
 #define SCREEN_HEIGHT 480         // px
 
-#define PADDLE_H_MARGIN 12 // px, horizontal margin to screen border
 #define WORLD_BOUNDS \
     (Rectangle) { 0, 4, 640, 480 - 8 } // {px,px,px,px}
-#define PADDLE_SPEED 200               // px/sec
-#define BALL_SPEED 100                 // px/sec
+
+#define PADDLE_H_MARGIN 12  // px, horizontal margin to screen border
+#define PADDLE_MAX_ANGLE 40 // degrees, angle added to ball velocity vector when collide paddle edges
+#define PADDLE_SPEED 260    // px/sec
+
+#define BALL_SPEED 300    // px/sec
+#define BALL_MAX_ANGLE 80 // degrees
 
 enum Scene
 {
