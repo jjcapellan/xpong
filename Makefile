@@ -74,7 +74,7 @@ CFLAGS += -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 	ifeq ($(BUILD_MODE),DEBUG)
-		CFLAGS += -g
+		CFLAGS += -g -DDEBUG
 	else
 		CFLAGS += -s -O1
 	endif
