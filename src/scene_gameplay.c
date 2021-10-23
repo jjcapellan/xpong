@@ -27,6 +27,7 @@ struct Entity ball;
 // Local functions
 void input_update();
 void paddle1_update(float deltaTime);
+void paddle2_update(float deltaTime);
 void ball_update(float deltaTime);
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
@@ -66,6 +67,7 @@ void scene_gameplay_update(float deltaTime)
 {
     input_update();
     paddle1_update(deltaTime);
+    paddle2_update(deltaTime);
     ball_update(deltaTime);
 };
 
@@ -95,6 +97,31 @@ void paddle1_update(float deltaTime)
     }
 
     paddle1.velocity.y = 0;
+}
+
+void paddle2_update(float deltaTime)
+{
+    if ((ball.bounds.y + ball.bounds.height / 2) < (paddle2.bounds.y + paddle2.bounds.height / 2))
+    {
+        paddle2.velocity.y = -PADDLE_SPEED;
+    }
+    else
+    {
+        paddle2.velocity.y = PADDLE_SPEED;
+    }
+
+    paddle2.bounds.y += paddle2.velocity.y * deltaTime;
+
+    if (paddle2.bounds.y < 4)
+    {
+        paddle2.bounds.y = 4;
+    }
+    else if (paddle2.bounds.y > (SCREEN_HEIGHT - 4 - paddle2.bounds.height))
+    {
+        paddle2.bounds.y = SCREEN_HEIGHT - 4 - paddle2.bounds.height;
+    }
+
+    paddle2.velocity.y = 0;
 }
 
 void ball_update(float deltaTime)
@@ -141,13 +168,13 @@ void ball_update(float deltaTime)
             vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
         }
 
-        #ifdef DEBUG
+#ifdef DEBUG
         if (ball.bounds.x > 630)
         {
             ball.bounds.x -= 2;
             ball.velocity.x *= -1;
         }
-        #endif
+#endif
 
         if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
         {
