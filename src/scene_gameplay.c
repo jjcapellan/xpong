@@ -28,6 +28,8 @@ struct Entity ball;
 void input_update();
 void paddle1_update(float deltaTime);
 void ball_update(float deltaTime);
+float vector2_get_angle(Vector2 v);
+void vector2_set_angle(Vector2 *v, float angle, float length);
 
 // Resources
 
@@ -100,6 +102,7 @@ void ball_update(float deltaTime)
     ball.bounds.x += ball.velocity.x * deltaTime;
     ball.bounds.y += ball.velocity.y * deltaTime;
 
+    // TOP/BOTTOM COLLISION
     if ((ball.bounds.y + ball.bounds.height) > WORLD_BOUNDS.y + WORLD_BOUNDS.height)
     {
         ball.bounds.y = WORLD_BOUNDS.y + WORLD_BOUNDS.height - ball.bounds.height;
@@ -110,6 +113,7 @@ void ball_update(float deltaTime)
         ball.bounds.y = WORLD_BOUNDS.y;
         ball.velocity.y *= -1;
     }
+
     if (ball.bounds.x < paddle1.bounds.x + paddle1.bounds.width || ball.bounds.x + ball.bounds.width > paddle2.bounds.x)
     {
         if (CheckCollisionRecs(ball.bounds, paddle1.bounds))
@@ -119,21 +123,22 @@ void ball_update(float deltaTime)
             ball.bounds.x = paddle1.bounds.x + paddle1.bounds.width;
             ball.velocity.x *= -1;
 
-            float angle1 = (-PADDLE_MAX_ANGLE * DEG2RAD * distToCenter) / (paddle1.bounds.height / 2);
-            bool isGoingUp = (ball.velocity.y < 0);
+            float angle0 = vector2_get_angle(ball.velocity);
+            float dAngle = (-PADDLE_MAX_ANGLE * distToCenter) / (paddle1.bounds.height / 2);
+            float angle1 = angle0 + dAngle;
 
-            ball.velocity = Vector2Rotate(ball.velocity, angle1);
-            float angle2 = atan2f(ball.velocity.y, ball.velocity.x) * RAD2DEG;
-            if (angle2 > BALL_MAX_ANGLE || angle2 < -BALL_MAX_ANGLE)
+            if (angle1 > BALL_MAX_ANGLE && angle1 < 360 - BALL_MAX_ANGLE)
             {
-                float angle = BALL_MAX_ANGLE * DEG2RAD;
-                if (isGoingUp)
+                if (angle0 < 90)
                 {
-                    angle *= -1;
+                    angle1 = BALL_MAX_ANGLE;
                 }
-                ball.velocity.x = cosf(angle) * BALL_SPEED;
-                ball.velocity.y = sinf(angle) * BALL_SPEED;
+                else
+                {
+                    angle1 = 360 - BALL_MAX_ANGLE;
+                }
             }
+            vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
         }
 
         if (ball.bounds.x > 630)
@@ -147,6 +152,23 @@ void ball_update(float deltaTime)
             ball.velocity.x *= -1;
         }*/
     }
+}
+
+float vector2_get_angle(Vector2 v)
+{
+    float angle = atan2f(v.y, v.x) * (180 / PI);
+    if (angle < 0)
+    {
+        angle += 360;
+    }
+    return angle;
+}
+
+// Angle in radians
+void vector2_set_angle(Vector2 *v, float angle, float length)
+{
+    v->x = cosf(angle) * length;
+    v->y = sinf(angle) * length;
 }
 
 void scene_gameplay_draw()
