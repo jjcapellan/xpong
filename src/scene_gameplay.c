@@ -141,22 +141,25 @@ void ball_update(float deltaTime)
             vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
         }
 
+        #ifdef DEBUG
         if (ball.bounds.x > 630)
         {
             ball.bounds.x -= 2;
             ball.velocity.x *= -1;
         }
-        /*if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
+        #endif
+
+        if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
         {
             ball.bounds.x = paddle2.bounds.x - paddle2.bounds.width;
             ball.velocity.x *= -1;
-        }*/
+        }
     }
 }
 
 float vector2_get_angle(Vector2 v)
 {
-    float angle = atan2f(v.y, v.x) * (180 / PI);
+    float angle = atan2f(v.y, v.x) * RAD2DEG;
     if (angle < 0)
     {
         angle += 360;
