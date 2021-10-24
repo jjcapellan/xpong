@@ -26,6 +26,7 @@ struct Entity ball;
 float npcSpeedFactor;
 int playerScore;
 int npcScore;
+int scoreSize;
 
 // Local functions
 void input_update();
@@ -61,11 +62,12 @@ void scene_gameplay_init()
     paddle2.bounds = (Rectangle){SCREEN_WIDTH - (paddle_width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
     paddle2.velocity = (Vector2){0, 0};
 
-    ball_reset();    
+    ball_reset();
 
     npcSpeedFactor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
     playerScore = 0;
     npcScore = 0;
+    scoreSize = MeasureText("00", 120);
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -251,11 +253,12 @@ void ball_collision_paddle2()
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
 }
 
-void ball_reset(){    
+void ball_reset()
+{
     ball.frameRect = ball_frame_rect;
     int ball_size = ball_frame_rect.width;
     ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
-    Vector2 v = (Vector2){BALL_SPEED, 0};
+    Vector2 v = (Vector2){BALL_SPEED / 2, 0};
     float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
     ball.velocity = Vector2Rotate(v, angle);
 }
@@ -265,6 +268,8 @@ void scene_gameplay_draw()
     BeginDrawing();
     ClearBackground(WHITE);
     DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
+    DrawText(TextFormat("%02i", playerScore), 320 - 40 - scoreSize, 240-60, 120, (Color){249, 168, 117, 80});
+    DrawText(TextFormat("%02i", npcScore), 320 + 40, 240-60, 120, (Color){249, 168, 117, 80});
     DrawTextureRec(texture_atlas, paddle1.frameRect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, paddle2.frameRect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, ball.frameRect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
