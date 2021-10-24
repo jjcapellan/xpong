@@ -24,6 +24,8 @@ struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
 float npcSpeedFactor;
+int playerScore;
+int npcScore;
 
 // Local functions
 void input_update();
@@ -32,6 +34,7 @@ void paddle2_update(float deltaTime);
 void ball_update(float deltaTime);
 void ball_collision_paddle1();
 void ball_collision_paddle2();
+void ball_reset();
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 
@@ -45,11 +48,10 @@ void scene_gameplay_init()
     fx_bounce = LoadSound("assets/bound.wav");
 
     paddle_frame_rect = (Rectangle){0, 480, 12, 72};
-    ball_frame_rect = (Rectangle){12, 480, 12, 12};
+    ball_frame_rect = BALL_FRAME_RECT;
     field_frame_rect = (Rectangle){0, 0, 640, 480};
     int paddle_width = paddle_frame_rect.width;
     int paddle_height = paddle_frame_rect.height;
-    int ball_size = ball_frame_rect.width;
 
     paddle1.frameRect = paddle_frame_rect;
     paddle1.bounds = (Rectangle){PADDLE_H_MARGIN, SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
@@ -59,13 +61,11 @@ void scene_gameplay_init()
     paddle2.bounds = (Rectangle){SCREEN_WIDTH - (paddle_width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
     paddle2.velocity = (Vector2){0, 0};
 
-    ball.frameRect = ball_frame_rect;
-    ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
-    Vector2 v = (Vector2){BALL_SPEED, 0};
-    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
-    ball.velocity = Vector2Rotate(v, angle);
+    ball_reset();    
 
     npcSpeedFactor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
+    playerScore = 0;
+    npcScore = 0;
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -170,6 +170,18 @@ void ball_update(float deltaTime)
             ball_collision_paddle2();
         }
     }
+
+    // SCORE EVENTS
+    if (ball.bounds.x < 0)
+    {
+        npcScore++;
+        ball_reset();
+    }
+    if (ball.bounds.x > SCREEN_WIDTH)
+    {
+        playerScore++;
+        ball_reset();
+    }
 }
 
 float vector2_get_angle(Vector2 v)
@@ -237,6 +249,15 @@ void ball_collision_paddle2()
         }
     }
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
+}
+
+void ball_reset(){    
+    ball.frameRect = ball_frame_rect;
+    int ball_size = ball_frame_rect.width;
+    ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
+    Vector2 v = (Vector2){BALL_SPEED, 0};
+    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
+    ball.velocity = Vector2Rotate(v, angle);
 }
 
 void scene_gameplay_draw()
