@@ -16,7 +16,7 @@
 #define NPC_MAX_SPEED_FACTOR 1.5 // float, max multiplier applied to normal speed
 
 #define BALL_SPEED 350    // px/sec
-#define BALL_MAX_ANGLE 80 // degrees
+#define BALL_MAX_ANGLE 65 // degrees
 
 enum Scene
 {
