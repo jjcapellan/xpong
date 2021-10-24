@@ -27,7 +27,7 @@ void scene_title_draw()
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTextureRec(texture_atlas, (Rectangle){0, 0, 640, 480}, (Vector2){0, 0}, WHITE);
-    DrawText(LABEL, SCREEN_WIDTH / 2 - label_width / 2, 110, 32, CLITERAL(Color){124,63,88,255});
+    DrawText(LABEL, SCREEN_WIDTH / 2 - label_width / 2, 110, 32, (Color){124,63,88,255});
     EndDrawing();
 }
 

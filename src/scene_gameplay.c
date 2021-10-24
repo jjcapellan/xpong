@@ -10,23 +10,26 @@
 
 struct Entity
 {
-    Rectangle frameRect;
+    Rectangle frame_rect;
     Rectangle bounds;
     Vector2 velocity; // px/sec
 };
 
 // Local variables
 
-Rectangle paddle_frame_rect;
-Rectangle ball_frame_rect;
-Rectangle field_frame_rect;
+Rectangle paddle_frame_rect = PADDLE_FRAME_RECT;
+Rectangle ball_frame_rect = BALL_FRAME_RECT;
+Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
+Rectangle world_bounds = WORLD_BOUNDS;
+int player_score = 0;
+int npc_score = 0;
+int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
+
 struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
-float npcSpeedFactor;
-int playerScore;
-int npcScore;
-int scoreSize;
+float npc_speed_factor;
+int score_size;
 
 // Local functions
 void input_update();
@@ -48,26 +51,21 @@ void scene_gameplay_init()
 {
     fx_bounce = LoadSound("assets/bound.wav");
 
-    paddle_frame_rect = (Rectangle){0, 480, 12, 72};
-    ball_frame_rect = BALL_FRAME_RECT;
-    field_frame_rect = (Rectangle){0, 0, 640, 480};
     int paddle_width = paddle_frame_rect.width;
     int paddle_height = paddle_frame_rect.height;
 
-    paddle1.frameRect = paddle_frame_rect;
+    paddle1.frame_rect = paddle_frame_rect;
     paddle1.bounds = (Rectangle){PADDLE_H_MARGIN, SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
     paddle1.velocity = (Vector2){0, 0};
 
-    paddle2.frameRect = paddle_frame_rect;
+    paddle2.frame_rect = paddle_frame_rect;
     paddle2.bounds = (Rectangle){SCREEN_WIDTH - (paddle_width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
     paddle2.velocity = (Vector2){0, 0};
 
     ball_reset(false);
 
-    npcSpeedFactor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
-    playerScore = 0;
-    npcScore = 0;
-    scoreSize = MeasureText("00", 120);
+    npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
+    score_size = MeasureText("00", SCORE_TEXT_SIZE);
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -120,7 +118,7 @@ void paddle2_update(float deltaTime)
         }
     }
 
-    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npcSpeedFactor * ball.bounds.x;
+    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;
 
     if (paddle2.bounds.y < 4)
     {
@@ -140,14 +138,14 @@ void ball_update(float deltaTime)
     ball.bounds.y += ball.velocity.y * deltaTime;
 
     // TOP/BOTTOM COLLISION
-    if ((ball.bounds.y + ball.bounds.height) > WORLD_BOUNDS.y + WORLD_BOUNDS.height)
+    if ((ball.bounds.y + ball.bounds.height) > world_bounds.y + world_bounds.height)
     {
-        ball.bounds.y = WORLD_BOUNDS.y + WORLD_BOUNDS.height - ball.bounds.height;
+        ball.bounds.y = world_bounds.y + world_bounds.height - ball.bounds.height;
         ball.velocity.y *= -1;
     }
-    if (ball.bounds.y < WORLD_BOUNDS.y)
+    if (ball.bounds.y < world_bounds.y)
     {
-        ball.bounds.y = WORLD_BOUNDS.y;
+        ball.bounds.y = world_bounds.y;
         ball.velocity.y *= -1;
     }
 
@@ -176,12 +174,12 @@ void ball_update(float deltaTime)
     // SCORE EVENTS
     if (ball.bounds.x < 0)
     {
-        npcScore++;
+        npc_score++;
         ball_reset(false);
     }
     if (ball.bounds.x > SCREEN_WIDTH)
     {
-        playerScore++;
+        player_score++;
         ball_reset(true);
     }
 }
@@ -255,7 +253,7 @@ void ball_collision_paddle2()
 
 void ball_reset(bool isPlayer)
 {
-    ball.frameRect = ball_frame_rect;
+    ball.frame_rect = ball_frame_rect;
     int ball_size = ball_frame_rect.width;
     ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
     Vector2 v = (Vector2){(1 - 2 * isPlayer) * BALL_SPEED / 2, 0};
@@ -268,11 +266,11 @@ void scene_gameplay_draw()
     BeginDrawing();
     ClearBackground(WHITE);
     DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
-    DrawText(TextFormat("%02i", playerScore), 320 - 40 - scoreSize, 240 - 60, 120, (Color){249, 168, 117, 80});
-    DrawText(TextFormat("%02i", npcScore), 320 + 40, 240 - 60, 120, (Color){249, 168, 117, 80});
-    DrawTextureRec(texture_atlas, paddle1.frameRect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
-    DrawTextureRec(texture_atlas, paddle2.frameRect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
-    DrawTextureRec(texture_atlas, ball.frameRect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
+    DrawText(TextFormat("%02i", player_score), 320 - 40 - score_size, score_text_y, SCORE_TEXT_SIZE, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("%02i", npc_score), 320 + 40, score_text_y, SCORE_TEXT_SIZE, SCORE_TEXT_COLOR);
+    DrawTextureRec(texture_atlas, paddle1.frame_rect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
+    DrawTextureRec(texture_atlas, paddle2.frame_rect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
+    DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
     EndDrawing();
 };
 void scene_gameplay_destroy()
