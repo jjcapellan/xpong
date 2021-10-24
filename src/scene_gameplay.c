@@ -31,6 +31,7 @@ void paddle1_update(float deltaTime);
 void paddle2_update(float deltaTime);
 void ball_update(float deltaTime);
 void ball_collision_paddle1();
+void ball_collision_paddle2();
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 
@@ -166,8 +167,7 @@ void ball_update(float deltaTime)
 
         if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
         {
-            ball.bounds.x = paddle2.bounds.x - paddle2.bounds.width;
-            ball.velocity.x *= -1;
+            ball_collision_paddle2();
         }
     }
 }
@@ -189,28 +189,54 @@ void vector2_set_angle(Vector2 *v, float angle, float length)
     v->y = sinf(angle) * length;
 }
 
-void ball_collision_paddle1(){
+void ball_collision_paddle1()
+{
     int distToCenter = (paddle1.bounds.y + paddle1.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
 
-            ball.bounds.x = paddle1.bounds.x + paddle1.bounds.width;
-            ball.velocity.x *= -1;
+    ball.bounds.x = paddle1.bounds.x + paddle1.bounds.width;
+    ball.velocity.x *= -1;
 
-            float angle0 = vector2_get_angle(ball.velocity);
-            float dAngle = (-PADDLE_MAX_ANGLE * distToCenter) / (paddle1.bounds.height / 2);
-            float angle1 = angle0 + dAngle;
+    float angle0 = vector2_get_angle(ball.velocity);
+    float dAngle = (-PADDLE_MAX_ANGLE * distToCenter) / (paddle1.bounds.height / 2);
+    float angle1 = angle0 + dAngle;
 
-            if (angle1 > BALL_MAX_ANGLE && angle1 < 360 - BALL_MAX_ANGLE)
-            {
-                if (angle0 < 90)
-                {
-                    angle1 = BALL_MAX_ANGLE;
-                }
-                else
-                {
-                    angle1 = 360 - BALL_MAX_ANGLE;
-                }
-            }
-            vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
+    if (angle1 > BALL_MAX_ANGLE && angle1 < 360 - BALL_MAX_ANGLE)
+    {
+        if (angle0 < 90)
+        {
+            angle1 = BALL_MAX_ANGLE;
+        }
+        else
+        {
+            angle1 = 360 - BALL_MAX_ANGLE;
+        }
+    }
+    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
+}
+
+void ball_collision_paddle2()
+{
+    int distToCenter = (paddle2.bounds.y + paddle2.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
+
+    ball.bounds.x = paddle2.bounds.x - ball.bounds.width;
+    ball.velocity.x *= -1;
+
+    float angle0 = vector2_get_angle(ball.velocity);
+    float dAngle = (PADDLE_MAX_ANGLE * distToCenter) / (paddle2.bounds.height / 2);
+    float angle1 = angle0 + dAngle;
+
+    if (angle1 < 180 - BALL_MAX_ANGLE || angle1 > 180 + BALL_MAX_ANGLE)
+    {
+        if (angle0 < 180)
+        {
+            angle1 = 180 - BALL_MAX_ANGLE;
+        }
+        else
+        {
+            angle1 = 180 + BALL_MAX_ANGLE;
+        }
+    }
+    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
 }
 
 void scene_gameplay_draw()
