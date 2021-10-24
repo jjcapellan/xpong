@@ -3,7 +3,6 @@
 #endif
 #include "defs.h"
 #include "raylib.h"
-#include "raymath.h"
 #include <math.h>
 
 // Local types
@@ -256,9 +255,9 @@ void ball_reset(bool isPlayer)
     ball.frame_rect = ball_frame_rect;
     int ball_size = ball_frame_rect.width;
     ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
-    Vector2 v = (Vector2){(1 - 2 * isPlayer) * BALL_SPEED / 2, 0};
-    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
-    ball.velocity = Vector2Rotate(v, angle);
+    float angle = (float)GetRandomValue(135, 225)* DEG2RAD;
+    vector2_set_angle(&ball.velocity, angle, BALL_SPEED / 2);
+    if(isPlayer)ball.velocity.x *= -1;
 }
 
 void scene_gameplay_draw()
