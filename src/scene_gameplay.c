@@ -43,12 +43,16 @@ void vector2_set_angle(Vector2 *v, float angle, float length);
 
 // Resources
 
-Sound fx_bounce;
+Sound fx_bounce1;
+Sound fx_bounce2;
+Sound fx_point;
 Texture2D texture_atlas; // Global
 
 void scene_gameplay_init()
 {
-    fx_bounce = LoadSound("assets/bound.wav");
+    fx_bounce1 = LoadSound("assets/bounce1.wav");
+    fx_bounce2 = LoadSound("assets/bounce2.wav");
+    fx_point = LoadSound("assets/point.wav");
 
     int paddle_width = paddle_frame_rect.width;
     int paddle_height = paddle_frame_rect.height;
@@ -141,11 +145,13 @@ void ball_update(float deltaTime)
     {
         ball.bounds.y = world_bounds.y + world_bounds.height - ball.bounds.height;
         ball.velocity.y *= -1;
+        PlaySound(fx_bounce2);
     }
     if (ball.bounds.y < world_bounds.y)
     {
         ball.bounds.y = world_bounds.y;
         ball.velocity.y *= -1;
+        PlaySound(fx_bounce2);
     }
 
     // PADDLE COLLISION
@@ -154,6 +160,7 @@ void ball_update(float deltaTime)
         if (CheckCollisionRecs(ball.bounds, paddle1.bounds))
         {
             ball_collision_paddle1();
+            PlaySound(fx_bounce1);
         }
 
 #ifdef DEBUG
@@ -167,17 +174,20 @@ void ball_update(float deltaTime)
         if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
         {
             ball_collision_paddle2();
+            PlaySound(fx_bounce1);
         }
     }
 
     // SCORE EVENTS
     if (ball.bounds.x < 0)
     {
+        PlaySound(fx_point);
         npc_score++;
         ball_reset(false);
     }
     if (ball.bounds.x > SCREEN_WIDTH)
     {
+        PlaySound(fx_point);
         player_score++;
         ball_reset(true);
     }
@@ -274,5 +284,5 @@ void scene_gameplay_draw()
 };
 void scene_gameplay_destroy()
 {
-    UnloadSound(fx_bounce);
+    UnloadSound(fx_bounce1);
 };
