@@ -13,9 +13,9 @@
 #define PADDLE_MAX_ANGLE 40      // degrees, angle added to ball velocity vector when collide paddle edges
 #define PADDLE_SPEED 260         // px/sec
 #define NPC_MIN_SPEED_FACTOR 0.1 // float, min multiplier applied to normal speed
-#define NPC_MAX_SPEED_FACTOR 1.5 // float, max multiplier applied to normal speed
+#define NPC_MAX_SPEED_FACTOR 1.1 // float, max multiplier applied to normal speed
 
-#define BALL_SPEED 350    // px/sec
+#define BALL_SPEED 380    // px/sec
 #define BALL_MAX_ANGLE 65 // degrees
 
 enum Scene
