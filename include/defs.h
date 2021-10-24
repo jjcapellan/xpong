@@ -9,9 +9,11 @@
 #define WORLD_BOUNDS \
     (Rectangle) { 0, 4, 640, 480 - 8 } // {px,px,px,px}
 
-#define PADDLE_H_MARGIN 12  // px, horizontal margin to screen border
-#define PADDLE_MAX_ANGLE 40 // degrees, angle added to ball velocity vector when collide paddle edges
-#define PADDLE_SPEED 260    // px/sec
+#define PADDLE_H_MARGIN 12       // px, horizontal margin to screen border
+#define PADDLE_MAX_ANGLE 40      // degrees, angle added to ball velocity vector when collide paddle edges
+#define PADDLE_SPEED 260         // px/sec
+#define NPC_MIN_SPEED_FACTOR 0.1 // float, min multiplier applied to normal speed
+#define NPC_MAX_SPEED_FACTOR 1.5 // float, max multiplier applied to normal speed
 
 #define BALL_SPEED 350    // px/sec
 #define BALL_MAX_ANGLE 80 // degrees

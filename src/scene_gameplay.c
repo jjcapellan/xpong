@@ -23,6 +23,7 @@ Rectangle field_frame_rect;
 struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
+float npcSpeedFactor;
 
 // Local functions
 void input_update();
@@ -61,6 +62,8 @@ void scene_gameplay_init()
     Vector2 v = (Vector2){BALL_SPEED, 0};
     float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
     ball.velocity = Vector2Rotate(v, angle);
+
+    npcSpeedFactor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -101,16 +104,19 @@ void paddle1_update(float deltaTime)
 
 void paddle2_update(float deltaTime)
 {
-    if ((ball.bounds.y + ball.bounds.height / 2) < (paddle2.bounds.y + paddle2.bounds.height / 2))
+    if (ball.velocity.x > 0)
     {
-        paddle2.velocity.y = -PADDLE_SPEED;
-    }
-    else
-    {
-        paddle2.velocity.y = PADDLE_SPEED;
+        if ((ball.bounds.y + ball.bounds.height / 2) < (paddle2.bounds.y + paddle2.bounds.height / 2))
+        {
+            paddle2.velocity.y = -PADDLE_SPEED;
+        }
+        else
+        {
+            paddle2.velocity.y = PADDLE_SPEED;
+        }
     }
 
-    paddle2.bounds.y += paddle2.velocity.y * deltaTime;
+    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npcSpeedFactor * ball.bounds.x;
 
     if (paddle2.bounds.y < 4)
     {
