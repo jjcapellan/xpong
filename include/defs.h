@@ -15,8 +15,10 @@
 #define NPC_MIN_SPEED_FACTOR 0.1 // float, min multiplier applied to normal speed
 #define NPC_MAX_SPEED_FACTOR 1.1 // float, max multiplier applied to normal speed
 
-#define BALL_SPEED 380    // px/sec
-#define BALL_MAX_ANGLE 65 // degrees
+#define BALL_FRAME_RECT \
+    (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
+#define BALL_SPEED 380              // px/sec
+#define BALL_MAX_ANGLE 65           // degrees
 
 enum Scene
 {
