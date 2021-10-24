@@ -13,7 +13,7 @@
 #define PADDLE_MAX_ANGLE 40 // degrees, angle added to ball velocity vector when collide paddle edges
 #define PADDLE_SPEED 260    // px/sec
 
-#define BALL_SPEED 300    // px/sec
+#define BALL_SPEED 350    // px/sec
 #define BALL_MAX_ANGLE 80 // degrees
 
 enum Scene
