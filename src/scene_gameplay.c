@@ -20,8 +20,8 @@ Rectangle paddle_frame_rect = PADDLE_FRAME_RECT;
 Rectangle ball_frame_rect = BALL_FRAME_RECT;
 Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
 Rectangle world_bounds = WORLD_BOUNDS;
-int player_score = 0;
-int npc_score = 0;
+int player_score;
+int npc_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 
 struct Entity paddle1;
@@ -40,6 +40,7 @@ void ball_collision_paddle2();
 void ball_reset(bool isPlayer);
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
+void check_gameover();
 
 // Resources
 
@@ -73,6 +74,9 @@ void scene_gameplay_init()
     npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
     //score_size = MeasureText("00", SCORE_TEXT_SIZE);
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
+
+    player_score = 0;
+    npc_score = 0;
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -187,6 +191,7 @@ void ball_update(float deltaTime)
     {
         PlaySound(fx_point);
         npc_score++;
+        check_gameover();
         ball_reset(false);
     }
     if (ball.bounds.x > SCREEN_WIDTH)
@@ -194,6 +199,16 @@ void ball_update(float deltaTime)
         PlaySound(fx_point);
         player_score++;
         ball_reset(true);
+    }
+}
+
+void check_gameover()
+{
+    if (npc_score > 11)
+    {
+        current_scene = SCENE_GAMEOVER;
+        scene_gameover_init();
+        scene_gameplay_destroy();
     }
 }
 
@@ -290,4 +305,5 @@ void scene_gameplay_draw()
 void scene_gameplay_destroy()
 {
     UnloadSound(fx_bounce1);
+    UnloadSound(fx_bounce2);
 };

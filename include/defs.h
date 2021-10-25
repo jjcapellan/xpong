@@ -46,4 +46,9 @@ void scene_gameplay_update(float deltaTime);
 void scene_gameplay_draw();
 void scene_gameplay_destroy();
 
+void scene_gameover_init();
+void scene_gameover_update();
+void scene_gameover_draw();
+void scene_gameover_destroy();
+
 #endif

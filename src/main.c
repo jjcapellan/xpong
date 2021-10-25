@@ -53,7 +53,8 @@ void run_frame()
         scene_title_draw();
         break;
     case SCENE_GAMEOVER:
-        /* code */
+        scene_gameover_update();
+        scene_gameover_draw();
         break;
     
     default:
