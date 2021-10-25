@@ -28,7 +28,7 @@ struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
 float npc_speed_factor;
-int score_size;
+Vector2 score_size;
 
 // Local functions
 void input_update();
@@ -46,6 +46,7 @@ void vector2_set_angle(Vector2 *v, float angle, float length);
 Sound fx_bounce1;
 Sound fx_bounce2;
 Sound fx_point;
+Font font;
 Texture2D texture_atlas; // Global
 
 void scene_gameplay_init()
@@ -53,6 +54,8 @@ void scene_gameplay_init()
     fx_bounce1 = LoadSound("assets/bounce1.wav");
     fx_bounce2 = LoadSound("assets/bounce2.wav");
     fx_point = LoadSound("assets/point.wav");
+    font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
+    SetTextureFilter(font.texture, 0);
 
     int paddle_width = paddle_frame_rect.width;
     int paddle_height = paddle_frame_rect.height;
@@ -68,7 +71,8 @@ void scene_gameplay_init()
     ball_reset(false);
 
     npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
-    score_size = MeasureText("00", SCORE_TEXT_SIZE);
+    //score_size = MeasureText("00", SCORE_TEXT_SIZE);
+    score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -265,9 +269,10 @@ void ball_reset(bool isPlayer)
     ball.frame_rect = ball_frame_rect;
     int ball_size = ball_frame_rect.width;
     ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
-    float angle = (float)GetRandomValue(135, 225)* DEG2RAD;
+    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
     vector2_set_angle(&ball.velocity, angle, BALL_SPEED / 2);
-    if(isPlayer)ball.velocity.x *= -1;
+    if (isPlayer)
+        ball.velocity.x *= -1;
 }
 
 void scene_gameplay_draw()
@@ -275,8 +280,8 @@ void scene_gameplay_draw()
     BeginDrawing();
     ClearBackground(WHITE);
     DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
-    DrawText(TextFormat("%02i", player_score), 320 - 40 - score_size, score_text_y, SCORE_TEXT_SIZE, SCORE_TEXT_COLOR);
-    DrawText(TextFormat("%02i", npc_score), 320 + 40, score_text_y, SCORE_TEXT_SIZE, SCORE_TEXT_COLOR);
+    DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
+    DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextureRec(texture_atlas, paddle1.frame_rect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, paddle2.frame_rect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
