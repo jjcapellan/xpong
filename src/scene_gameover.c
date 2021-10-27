@@ -20,10 +20,10 @@ void scene_gameover_update()
 
 void scene_gameover_draw()
 {
-    BeginDrawing();
-    ClearBackground(BLACK);
+    //BeginDrawing();
+    //ClearBackground(BLACK);
     DrawTexture(texture_gameover, 0, 0, WHITE);
-    EndDrawing();
+    //EndDrawing();
 }
 
 void scene_gameover_destroy()

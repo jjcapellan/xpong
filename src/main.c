@@ -45,21 +45,29 @@ void run_frame()
     switch (current_scene)
     {
     case SCENE_GAMEPLAY:
-        scene_gameplay_update(GetFrameTime());
+        scene_gameplay_update(GetFrameTime());        
+        BeginDrawing();
+        ClearBackground(BLACK);
         scene_gameplay_draw();
         break;
     case SCENE_TITLE:
         scene_title_update();
+        BeginDrawing();
+        ClearBackground(BLACK);
         scene_title_draw();
         break;
     case SCENE_GAMEOVER:
         scene_gameover_update();
+        BeginDrawing();
+        ClearBackground(BLACK);
         scene_gameover_draw();
         break;
 
     default:
         break;
     }
+
+    EndDrawing();
 }
 
 void unload_current_scene()
