@@ -306,4 +306,6 @@ void scene_gameplay_destroy()
 {
     UnloadSound(fx_bounce1);
     UnloadSound(fx_bounce2);
+    UnloadSound(fx_point);
+    UnloadFont(font);
 };
