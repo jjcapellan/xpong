@@ -206,9 +206,11 @@ void check_gameover()
 {
     if (npc_score > 11)
     {
-        current_scene = SCENE_GAMEOVER;
+        /*current_scene = SCENE_GAMEOVER;
         scene_gameover_init();
-        scene_gameplay_destroy();
+        scene_gameplay_destroy();*/
+        current_scene = SCENE_TRANSITION;
+        scene_transition_init(SCENE_GAMEPLAY, SCENE_GAMEOVER);
     }
 }
 

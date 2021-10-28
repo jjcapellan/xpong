@@ -6,6 +6,8 @@
 #define SCREEN_WIDTH 640          // px
 #define SCREEN_HEIGHT 480         // px
 
+#define TRANSITION_DURATION 0.8 // secs, transition duration between scenes
+
 #define WORLD_BOUNDS \
     (Rectangle) { 0, 4, 640, 480 - 8 } // {px,px,px,px}
 
@@ -30,7 +32,8 @@ enum Scene
 {
     SCENE_TITLE = 0,
     SCENE_GAMEPLAY,
-    SCENE_GAMEOVER
+    SCENE_GAMEOVER,
+    SCENE_TRANSITION
 };
 
 extern enum Scene current_scene;
@@ -50,5 +53,9 @@ void scene_gameover_init();
 void scene_gameover_update();
 void scene_gameover_draw();
 void scene_gameover_destroy();
+
+void scene_transition_init();
+void scene_transition_update(float deltaTime);
+void scene_transition_draw();
 
 #endif

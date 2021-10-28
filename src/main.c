@@ -45,7 +45,7 @@ void run_frame()
     switch (current_scene)
     {
     case SCENE_GAMEPLAY:
-        scene_gameplay_update(GetFrameTime());        
+        scene_gameplay_update(GetFrameTime());
         BeginDrawing();
         ClearBackground(BLACK);
         scene_gameplay_draw();
@@ -61,6 +61,12 @@ void run_frame()
         BeginDrawing();
         ClearBackground(BLACK);
         scene_gameover_draw();
+        break;
+    case SCENE_TRANSITION:
+        scene_transition_update(GetFrameTime());
+        BeginDrawing();
+        ClearBackground(BLACK);
+        scene_transition_draw();
         break;
 
     default:
