@@ -11,13 +11,25 @@ float duration = TRANSITION_DURATION;
 float time_elapsed;
 int alpha;
 
+// [sc1init,sc1draw,sc1destroy, ..., sc12init,sc12draw,sc12destroy]
+void (*scene_func[9])() = {
+    scene_title_init,
+    scene_title_draw,
+    scene_title_destroy,
+    scene_gameplay_init,
+    scene_gameplay_draw,
+    scene_gameplay_destroy,
+    scene_gameover_init,
+    scene_gameover_draw,
+    scene_gameover_destroy};
+
 void scene_transition_init(int source, int target)
 {
     scene_source = source;
     scene_target = target;
     time_elapsed = 0;
     alpha = 0;
-    init_scene(scene_target);
+    (*scene_func[scene_target * 3 + 0])();
 }
 
 void scene_transition_update(float delta_time)
@@ -25,12 +37,12 @@ void scene_transition_update(float delta_time)
     time_elapsed += delta_time;
     if (time_elapsed > duration)
     {
-        unload_scene(scene_source);
+        (*scene_func[scene_source * 3 + 2])();
         current_scene = scene_target;
     }
     // y = ax^2 + bx + c ; max = 255
     float x = time_elapsed / duration;
-    alpha = (int)(-1020*x*x + 1020*x);
+    alpha = (int)(-1020 * x * x + 1020 * x);
 }
 
 void scene_transition_draw()
@@ -38,70 +50,13 @@ void scene_transition_draw()
 
     if (time_elapsed < duration / 2)
     {
-        draw_scene(scene_source);
+        (*scene_func[scene_source * 3 + 1])();
     }
     else
     {
-        draw_scene(scene_target);
+        (*scene_func[scene_target * 3 + 1])();
     }
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){124, 63, 88, alpha});
-}
-
-void draw_scene(int scene)
-{
-    switch (scene)
-    {
-    case SCENE_GAMEPLAY:
-        scene_gameplay_draw();
-        break;
-    case SCENE_TITLE:
-        scene_title_draw();
-        break;
-    case SCENE_GAMEOVER:
-        scene_gameover_draw();
-        break;
-
-    default:
-        break;
-    }
-}
-
-void init_scene(int scene)
-{
-    switch (scene)
-    {
-    case SCENE_GAMEPLAY:
-        scene_gameplay_init();
-        break;
-    case SCENE_TITLE:
-        scene_title_init();
-        break;
-    case SCENE_GAMEOVER:
-        scene_gameover_init();
-        break;
-
-    default:
-        break;
-    }
-}
-
-void unload_scene(int scene)
-{
-    switch (scene)
-    {
-    case SCENE_GAMEPLAY:
-        scene_gameplay_destroy();
-        break;
-    case SCENE_TITLE:
-        scene_title_destroy();
-        break;
-    case SCENE_GAMEOVER:
-        scene_gameover_destroy();
-        break;
-
-    default:
-        break;
-    }
 }
 
 void scene_transition_destroy()
