@@ -206,9 +206,6 @@ void check_gameover()
 {
     if (npc_score > 11)
     {
-        /*current_scene = SCENE_GAMEOVER;
-        scene_gameover_init();
-        scene_gameplay_destroy();*/
         current_scene = SCENE_TRANSITION;
         scene_transition_init(SCENE_GAMEPLAY, SCENE_GAMEOVER);
     }
@@ -294,15 +291,12 @@ void ball_reset(bool isPlayer)
 
 void scene_gameplay_draw()
 {
-    //BeginDrawing();
-    //ClearBackground(WHITE);
     DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextureRec(texture_atlas, paddle1.frame_rect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, paddle2.frame_rect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
-    //EndDrawing();
 };
 void scene_gameplay_destroy()
 {

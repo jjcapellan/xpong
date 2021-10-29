@@ -19,10 +19,7 @@ void scene_title_update()
 
 void scene_title_draw()
 {
-    //BeginDrawing();
-    //ClearBackground(BLACK);
     DrawTexture(texture_title, 0, 0, WHITE);
-    //EndDrawing();
 }
 
 void scene_title_destroy()
