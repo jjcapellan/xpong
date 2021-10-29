@@ -12,9 +12,8 @@ void scene_title_update()
 {
     if (IsKeyDown(KEY_SPACE))
     {
-        scene_gameplay_init();
-        scene_title_destroy();
-        current_scene = SCENE_GAMEPLAY;
+        current_scene = SCENE_TRANSITION;
+        scene_transition_init(SCENE_TITLE, SCENE_GAMEPLAY);
     }
 }
 
