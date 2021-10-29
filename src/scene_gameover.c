@@ -12,7 +12,6 @@ void scene_gameover_update()
 {
     if (IsKeyDown(KEY_SPACE))
     {
-        current_scene = SCENE_TRANSITION;
         scene_transition_init(SCENE_GAMEOVER, SCENE_GAMEPLAY);
     }
 }

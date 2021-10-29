@@ -25,6 +25,7 @@ void (*scene_func[9])() = {
 
 void scene_transition_init(int source, int target)
 {
+    current_scene = SCENE_TRANSITION;
     scene_source = source;
     scene_target = target;
     time_elapsed = 0;
