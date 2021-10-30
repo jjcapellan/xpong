@@ -20,6 +20,7 @@ Rectangle paddle_frame_rect = PADDLE_FRAME_RECT;
 Rectangle ball_frame_rect = BALL_FRAME_RECT;
 Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
 Rectangle world_bounds = WORLD_BOUNDS;
+int ball_speed;
 int player_score;
 int npc_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
@@ -29,6 +30,7 @@ struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
 float npc_speed_factor;
+float paddle_speed;
 Vector2 score_size;
 Vector2 level_text_size;
 
@@ -43,6 +45,7 @@ void ball_reset(bool isPlayer);
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 void check_gameover();
+void new_level();
 
 // Resources
 
@@ -71,6 +74,9 @@ void scene_gameplay_init()
     paddle2.bounds = (Rectangle){SCREEN_WIDTH - (paddle_width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
     paddle2.velocity = (Vector2){0, 0};
 
+    paddle_speed = PADDLE_SPEED;
+    ball_speed = BALL_SPEED;
+
     ball_reset(false);
 
     npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
@@ -95,11 +101,11 @@ void input_update()
 {
     if (IsKeyDown(KEY_UP))
     {
-        paddle1.velocity.y = -PADDLE_SPEED;
+        paddle1.velocity.y = -paddle_speed;
     }
     else if (IsKeyDown(KEY_DOWN))
     {
-        paddle1.velocity.y = PADDLE_SPEED;
+        paddle1.velocity.y = paddle_speed;
     }
 }
 
@@ -202,13 +208,27 @@ void ball_update(float deltaTime)
     {
         PlaySound(fx_point);
         player_score++;
+        if (player_score > POINTS_PER_LEVEL)
+        {
+            level++;
+            player_score = 0;
+            npc_score = 0;
+            new_level();
+        }
         ball_reset(true);
     }
 }
 
+void new_level()
+{
+    ball_speed *= 1.10;
+    npc_speed_factor *= 1.15;
+    paddle_speed *= 1.10;
+}
+
 void check_gameover()
 {
-    if (npc_score > 11)
+    if (npc_score > POINTS_PER_LEVEL)
     {
         scene_transition_init(SCENE_GAMEPLAY, SCENE_GAMEOVER);
     }
@@ -253,7 +273,7 @@ void ball_collision_paddle1()
             angle1 = 360 - BALL_MAX_ANGLE;
         }
     }
-    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
+    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
 }
 
 void ball_collision_paddle2()
@@ -278,7 +298,7 @@ void ball_collision_paddle2()
             angle1 = 180 + BALL_MAX_ANGLE;
         }
     }
-    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, BALL_SPEED);
+    vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
 }
 
 void ball_reset(bool isPlayer)
@@ -287,7 +307,7 @@ void ball_reset(bool isPlayer)
     int ball_size = ball_frame_rect.width;
     ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
     float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
-    vector2_set_angle(&ball.velocity, angle, BALL_SPEED / 2);
+    vector2_set_angle(&ball.velocity, angle, BALL_SPEED_START);
     if (isPlayer)
         ball.velocity.x *= -1;
 }
