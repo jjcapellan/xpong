@@ -1,8 +1,10 @@
-## wip
+## v0.1.0-alpha
 * Improved: collision between ball and paddle produces a bounce angle proportional to impact distance to the paddle center.
 * Added: npc paddle movement.
 * Added: score system.
 * Added: transition effect between scenes.
+* Added: difficulty levels.
+* Fixed: unload resources on window close.
 
 ## V0.0.0-alpha
 * Added: basic scenes structure.
