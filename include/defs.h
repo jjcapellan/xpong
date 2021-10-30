@@ -26,7 +26,9 @@
 
 #define SCORE_TEXT_COLOR \
     (Color) { 249, 168, 117, 80 } // Color
-#define SCORE_TEXT_SIZE 144       // px
+#define LEVEL_TEXT_COLOR \
+    (Color) { 249, 168, 117, 255 } // Color
+#define SCORE_TEXT_SIZE 144        // px
 
 enum Scene
 {

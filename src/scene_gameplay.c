@@ -23,12 +23,14 @@ Rectangle world_bounds = WORLD_BOUNDS;
 int player_score;
 int npc_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
+int level;
 
 struct Entity paddle1;
 struct Entity paddle2;
 struct Entity ball;
 float npc_speed_factor;
 Vector2 score_size;
+Vector2 level_text_size;
 
 // Local functions
 void input_update();
@@ -74,9 +76,11 @@ void scene_gameplay_init()
     npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
     //score_size = MeasureText("00", SCORE_TEXT_SIZE);
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
+    level_text_size = MeasureTextEx(font, "L 0", 24, -4);
 
     player_score = 0;
     npc_score = 0;
+    level = 1;
 }
 
 void scene_gameplay_update(float deltaTime)
@@ -291,6 +295,7 @@ void ball_reset(bool isPlayer)
 void scene_gameplay_draw()
 {
     DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
+    DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextureRec(texture_atlas, paddle1.frame_rect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
