@@ -172,7 +172,8 @@ PROJECT_SOURCE_FILES ?= \
 	./src/scene_title.c \
 	./src/scene_transition.c \
 	./src/gameplay/player.c \
-	./src/gameplay/npc.c
+	./src/gameplay/npc.c \
+	./src/gameplay/ball.c
 
 OBJS = $(addprefix ./obj/,$(notdir $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))))
 
@@ -200,6 +201,10 @@ $(EXE):$(OBJS)
 	$(CC) $(CFLAGS) -c $^ -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
 
 ./obj/npc.o: ./src/gameplay/npc.c
+	echo subdir
+	$(CC) $(CFLAGS) -c $^ -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
+
+./obj/ball.o: ./src/gameplay/ball.c
 	echo subdir
 	$(CC) $(CFLAGS) -c $^ -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
 

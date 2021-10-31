@@ -26,6 +26,15 @@ void npc_init();
 void npc_update(float delta_time);
 void npc_reset();
 
+void ball_init();
+void ball_update(float delta_time);
+void ball_reset(bool is_player);
+
+void event_wall();
+void event_paddle_bounce();
+void event_npc_score();
+void event_player_score();
+
 extern Entity player;
 extern Entity npc;
 extern Entity ball;
