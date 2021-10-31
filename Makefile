@@ -63,8 +63,8 @@ endif
 # ********** COMPILER
 CC = gcc
 ifeq ($(PLATFORM),PLATFORM_WEB)
-    # HTML5 emscripten compiler
-    CC = emcc
+	# HTML5 emscripten compiler
+	CC = emcc
 endif
 
 
@@ -79,11 +79,11 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 		CFLAGS += -s -O1
 	endif
 	ifeq ($(PLATFORM_OS),LINUX)
-        ifeq ($(RAYLIB_LIBTYPE),SHARED)
-            # Explicitly enable runtime link to libraylib.so
-            CFLAGS += -Wl,-rpath,$(RAYLIB_BIN_PATH)
-        endif
-    endif
+		ifeq ($(RAYLIB_LIBTYPE),SHARED)
+			# Explicitly enable runtime link to libraylib.so
+			CFLAGS += -Wl,-rpath,$(RAYLIB_BIN_PATH)
+		endif
+	endif
 endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -102,7 +102,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 	ifeq ($(PLATFORM_OS), WINDOWS)
 		EXT = .exe
 	endif
-    ifeq ($(PLATFORM_OS), LINUX)
+	ifeq ($(PLATFORM_OS), LINUX)
 		EXT = .out
 	endif
 endif
@@ -119,53 +119,61 @@ INCLUDE_PATHS = -I./src -I$(PROJECT_INCLUDE_PATH) -I$(RAYLIB_PATH)/src -I$(RAYLI
 LDFLAGS = -L$(RAYLIB_BIN_PATH)
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-    ifeq ($(PLATFORM_OS),WINDOWS)
-        # resource file contains windows executable icon and properties
-        LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
-        # -Wl,--subsystem,windows hides the console window
-        ifeq ($(BUILD_MODE), RELEASE)
-            LDFLAGS += -Wl,--subsystem,windows
-        endif
-    endif
+	ifeq ($(PLATFORM_OS),WINDOWS)
+		# resource file contains windows executable icon and properties
+		LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
+		# -Wl,--subsystem,windows hides the console window
+		ifeq ($(BUILD_MODE), RELEASE)
+			LDFLAGS += -Wl,--subsystem,windows
+		endif
+	endif
 endif
 
 # ************* -l FLAG
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-    ifeq ($(PLATFORM_OS),WINDOWS)
-        LDLIBS = $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
-        LDLIBS += -static -lpthread
-    endif
-    ifeq ($(PLATFORM_OS),LINUX)
-        # NOTE: Required packages: libegl1-mesa-dev
-        LDLIBS = $(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt
+	ifeq ($(PLATFORM_OS),WINDOWS)
+		LDLIBS = $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
+		LDLIBS += -static -lpthread
+	endif
+	ifeq ($(PLATFORM_OS),LINUX)
+		# NOTE: Required packages: libegl1-mesa-dev
+		LDLIBS = $(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt
 
-        # On X11 requires also below libraries
-        LDLIBS += -lX11
-        # NOTE: It seems additional libraries are not required any more, latest GLFW just dlopen them
-        #LDLIBS += -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor
+		# On X11 requires also below libraries
+		LDLIBS += -lX11
+		# NOTE: It seems additional libraries are not required any more, latest GLFW just dlopen them
+		#LDLIBS += -lXrandr -lXinerama -lXi -lXxf86vm -lXcursor
 
-        # On Wayland windowing system, additional libraries requires
-        ifeq ($(USE_WAYLAND_DISPLAY),TRUE)
-            LDLIBS += -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon
-        endif
-        # Explicit link to libc
-        ifeq ($(RAYLIB_LIBTYPE),SHARED)
-            LDLIBS += -lc
-        endif
-    endif
-    ifeq ($(USE_EXTERNAL_GLFW),TRUE)
-        # NOTE: It could require additional packages installed: libglfw3-dev
-        LDLIBS += -lglfw
-    endif
+		# On Wayland windowing system, additional libraries requires
+		ifeq ($(USE_WAYLAND_DISPLAY),TRUE)
+			LDLIBS += -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon
+		endif
+		# Explicit link to libc
+		ifeq ($(RAYLIB_LIBTYPE),SHARED)
+			LDLIBS += -lc
+		endif
+	endif
+	ifeq ($(USE_EXTERNAL_GLFW),TRUE)
+		# NOTE: It could require additional packages installed: libglfw3-dev
+		LDLIBS += -lglfw
+	endif
 endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
-    LDLIBS = $(RAYLIB_LIB)
+	LDLIBS = $(RAYLIB_LIB)
 endif
 
 # ************* DEFINE FILES USED IN COMPILATION
-PROJECT_SOURCE_FILES ?= $(wildcard ./src/*.c ./src/*/*.c)
+PROJECT_SOURCE_FILES ?= \
+	./src/main.c \
+	./src/scene_gameover.c \
+	./src/scene_gameplay.c \
+	./src/scene_title.c \
+	./src/scene_transition.c \
+	./src/gameplay/player.c \
+	./src/gameplay/npc.c
+
 OBJS = $(addprefix ./obj/,$(notdir $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))))
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
@@ -181,11 +189,19 @@ all:$(EXE)
 
 # Link
 $(EXE):$(OBJS)
-	$(CC) $(LDFLAGS) $^ $(CFLAGS) $(LDLIBS) -D$(PLATFORM) -o $(EXE)
+	$(CC) $(LDFLAGS) $(OBJS) $(CFLAGS) $(LDLIBS) -D$(PLATFORM) -o $(EXE)
 
 # Compilation
 ./obj/%.o: ./src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
+
+./obj/player.o: ./src/gameplay/player.c
+	echo subdir
+	$(CC) $(CFLAGS) -c $^ -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
+
+./obj/npc.o: ./src/gameplay/npc.c
+	echo subdir
+	$(CC) $(CFLAGS) -c $^ -o $@ $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Deletes object files
 clean:

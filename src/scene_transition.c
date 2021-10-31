@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "gameplay.h"
 #include <math.h>
 
 void init_scene(int scene);

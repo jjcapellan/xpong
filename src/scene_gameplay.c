@@ -2,28 +2,10 @@
 #include <stdio.h>
 #endif
 #include "defs.h"
-#include "raylib.h"
+#include "gameplay.h"
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
-
-// Local types
-
-struct Entity
-{
-    Rectangle frame_rect;
-    Rectangle bounds;
-    Vector2 velocity; // px/sec
-};
-
-typedef enum Npc_states
-{
-    THINKING,
-    READY,
-    IDLE,
-    UP,
-    DOWN
-} Paddle_state;
 
 // Local variables
 
@@ -32,16 +14,12 @@ Rectangle ball_frame_rect = BALL_FRAME_RECT;
 Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
 Rectangle world_bounds = WORLD_BOUNDS;
 
-struct Entity paddle1;
-struct Entity paddle2;
-Paddle_state npc_state;
-float npc_time_react;
+Entity player; // Global
+Entity npc;  // Global
 int npc_score;
-float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
-float npc_speed_factor;
 float paddle_speed;
 
-struct Entity ball;
+Entity ball;
 float ball_prev_vel_x;
 int ball_speed;
 
@@ -54,8 +32,6 @@ Vector2 level_text_size;
 
 // Local functions
 void input_update();
-void paddle1_update(float deltaTime);
-void paddle2_update(float deltaTime);
 void ball_update(float deltaTime);
 void ball_collision_paddle1();
 void ball_collision_paddle2();
@@ -64,8 +40,6 @@ float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 void check_gameover();
 void new_level();
-float entity_get_y_center(struct Entity entity);
-void check_npc_event(float delta_time);
 
 // Resources
 
@@ -88,24 +62,15 @@ void scene_gameplay_init()
     int paddle_width = paddle_frame_rect.width;
     int paddle_height = paddle_frame_rect.height;
 
-    paddle1.frame_rect = paddle_frame_rect;
-    paddle1.bounds = (Rectangle){PADDLE_H_MARGIN, SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
-    paddle1.velocity = (Vector2){0, 0};
-
-    paddle2.frame_rect = paddle_frame_rect;
-    paddle2.bounds = (Rectangle){SCREEN_WIDTH - (paddle_width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - paddle_height / 2, paddle_width, paddle_height};
-    paddle2.velocity = (Vector2){0, 0};
+    player_init();
+    
+    npc_init();
 
     paddle_speed = PADDLE_SPEED;
     ball_speed = BALL_SPEED;
 
     ball_reset(false);
     ball_prev_vel_x = ball.velocity.x;
-
-    npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
-    npc_state = THINKING;
-    npc_time_react = NPC_MIN_TIME_REACTION + (drand48() * (0.8 - 0.1) + 0.1); // <--- adjust max min
-    npc_ball_prev_y_offset = 0;
 
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
     level_text_size = MeasureTextEx(font, "L 0", 24, -4);
@@ -118,8 +83,8 @@ void scene_gameplay_init()
 void scene_gameplay_update(float deltaTime)
 {
     input_update();
-    paddle1_update(deltaTime);
-    paddle2_update(deltaTime);
+    player_update(deltaTime);
+    npc_update(deltaTime);
     ball_update(deltaTime);
 };
 
@@ -127,129 +92,28 @@ void input_update()
 {
     if (IsKeyDown(KEY_UP))
     {
-        paddle1.velocity.y = -paddle_speed;
+        player.velocity.y = -paddle_speed;
     }
     else if (IsKeyDown(KEY_DOWN))
     {
-        paddle1.velocity.y = paddle_speed;
+        player.velocity.y = paddle_speed;
     }
 }
 
 void paddle1_update(float deltaTime)
 {
-    paddle1.bounds.y += paddle1.velocity.y * deltaTime;
+    player.bounds.y += player.velocity.y * deltaTime;
 
-    if (paddle1.bounds.y < 4)
+    if (player.bounds.y < 4)
     {
-        paddle1.bounds.y = 4;
+        player.bounds.y = 4;
     }
-    else if (paddle1.bounds.y > (SCREEN_HEIGHT - 4 - paddle1.bounds.height))
+    else if (player.bounds.y > (SCREEN_HEIGHT - 4 - player.bounds.height))
     {
-        paddle1.bounds.y = SCREEN_HEIGHT - 4 - paddle1.bounds.height;
-    }
-
-    paddle1.velocity.y = 0;
-}
-
-void paddle2_update(float deltaTime)
-{
-    check_npc_event(deltaTime);
-    if (npc_state == THINKING)
-    {
-        return;
+        player.bounds.y = SCREEN_HEIGHT - 4 - player.bounds.height;
     }
 
-    if (npc_state == READY)
-    {
-        if (ball.velocity.x < 0)
-        {
-            npc_state = IDLE;
-        }
-        else
-        {
-            float y_offset = entity_get_y_center(ball) - entity_get_y_center(paddle2);
-            if (y_offset < 0)
-            {
-                npc_state = UP;
-            }
-            else if (y_offset > 0)
-            {
-                npc_state = DOWN;
-            }
-            else
-            {
-                npc_state = IDLE;
-            }
-        }
-    }
-
-    switch (npc_state)
-    {
-    case UP:
-        paddle2.velocity.y = -PADDLE_SPEED;
-        break;
-    case DOWN:
-        paddle2.velocity.y = PADDLE_SPEED;
-
-        break;
-    case IDLE:
-        paddle2.velocity.y = 0;
-        break;
-    }
-    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;
-
-    /*
-    if (ball.velocity.x > 0)
-    {
-        if ((ball.bounds.y + ball.bounds.height / 2) < (paddle2.bounds.y + paddle2.bounds.height / 2))
-        {
-            paddle2.velocity.y = -PADDLE_SPEED;
-        }
-        else
-        {
-            paddle2.velocity.y = PADDLE_SPEED;
-        }
-    }
-
-    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;*/
-
-    if (paddle2.bounds.y < 4)
-    {
-        paddle2.bounds.y = 4;
-    }
-    else if (paddle2.bounds.y > (SCREEN_HEIGHT - 4 - paddle2.bounds.height))
-    {
-        paddle2.bounds.y = SCREEN_HEIGHT - 4 - paddle2.bounds.height;
-    }
-
-    //paddle2.velocity.y = 0;
-}
-
-void check_npc_event(float delta_time)
-{
-    float current_npc_ball_y_offset = entity_get_y_center(ball) - entity_get_y_center(paddle2);
-    if (npc_state == THINKING)
-    {
-        npc_time_react -= delta_time * CLOCKS_PER_SEC;
-    }
-    if (npc_time_react < 0)
-    {
-        npc_time_react = 0;
-        npc_state = READY;
-    }
-    if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
-    {
-        npc_state = THINKING;
-        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
-    }
-    if (ball_prev_vel_x * ball.velocity.x < 0)
-    {
-        npc_state = THINKING;
-        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
-    }
-
-    npc_ball_prev_y_offset = current_npc_ball_y_offset;
-    ball_prev_vel_x = ball.velocity.x;
+    player.velocity.y = 0;
 }
 
 void ball_update(float deltaTime)
@@ -272,9 +136,9 @@ void ball_update(float deltaTime)
     }
 
     // PADDLE COLLISION
-    if (ball.bounds.x < paddle1.bounds.x + paddle1.bounds.width || ball.bounds.x + ball.bounds.width > paddle2.bounds.x)
+    if (ball.bounds.x < player.bounds.x + player.bounds.width || ball.bounds.x + ball.bounds.width > npc.bounds.x)
     {
-        if (CheckCollisionRecs(ball.bounds, paddle1.bounds))
+        if (CheckCollisionRecs(ball.bounds, player.bounds))
         {
             ball_collision_paddle1();
             PlaySound(fx_bounce1);
@@ -288,7 +152,7 @@ void ball_update(float deltaTime)
         }
 #endif
 
-        if (CheckCollisionRecs(ball.bounds, paddle2.bounds))
+        if (CheckCollisionRecs(ball.bounds, npc.bounds))
         {
             ball_collision_paddle2();
             PlaySound(fx_bounce1);
@@ -322,7 +186,7 @@ void ball_update(float deltaTime)
 void new_level()
 {
     ball_speed *= 1.10;
-    npc_speed_factor *= 1.15;
+    //npc_speed_factor *= 1.15;
     paddle_speed *= 1.10;
 }
 
@@ -332,11 +196,6 @@ void check_gameover()
     {
         scene_transition_init(SCENE_GAMEPLAY, SCENE_GAMEOVER);
     }
-}
-
-float entity_get_y_center(struct Entity entity)
-{
-    return entity.bounds.y + entity.bounds.height;
 }
 
 float vector2_get_angle(Vector2 v)
@@ -358,13 +217,13 @@ void vector2_set_angle(Vector2 *v, float angle, float length)
 
 void ball_collision_paddle1()
 {
-    int distToCenter = (paddle1.bounds.y + paddle1.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
+    int distToCenter = (player.bounds.y + player.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
 
-    ball.bounds.x = paddle1.bounds.x + paddle1.bounds.width;
+    ball.bounds.x = player.bounds.x + player.bounds.width;
     ball.velocity.x *= -1;
 
     float angle0 = vector2_get_angle(ball.velocity);
-    float dAngle = (-PADDLE_MAX_ANGLE * distToCenter) / (paddle1.bounds.height / 2);
+    float dAngle = (-PADDLE_MAX_ANGLE * distToCenter) / (player.bounds.height / 2);
     float angle1 = angle0 + dAngle;
 
     if (angle1 > BALL_MAX_ANGLE && angle1 < 360 - BALL_MAX_ANGLE)
@@ -383,13 +242,13 @@ void ball_collision_paddle1()
 
 void ball_collision_paddle2()
 {
-    int distToCenter = (paddle2.bounds.y + paddle2.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
+    int distToCenter = (npc.bounds.y + npc.bounds.height / 2) - (ball.bounds.y + ball.bounds.height / 2);
 
-    ball.bounds.x = paddle2.bounds.x - ball.bounds.width;
+    ball.bounds.x = npc.bounds.x - ball.bounds.width;
     ball.velocity.x *= -1;
 
     float angle0 = vector2_get_angle(ball.velocity);
-    float dAngle = (PADDLE_MAX_ANGLE * distToCenter) / (paddle2.bounds.height / 2);
+    float dAngle = (PADDLE_MAX_ANGLE * distToCenter) / (npc.bounds.height / 2);
     float angle1 = angle0 + dAngle;
 
     if (angle1 < 180 - BALL_MAX_ANGLE || angle1 > 180 + BALL_MAX_ANGLE)
@@ -416,8 +275,7 @@ void ball_reset(bool isPlayer)
     if (isPlayer)
         ball.velocity.x *= -1;
 
-    npc_state = THINKING;
-    npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1;
+    npc_reset();
 }
 
 void scene_gameplay_draw()
@@ -426,8 +284,8 @@ void scene_gameplay_draw()
     DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
-    DrawTextureRec(texture_atlas, paddle1.frame_rect, (Vector2){paddle1.bounds.x, paddle1.bounds.y}, WHITE);
-    DrawTextureRec(texture_atlas, paddle2.frame_rect, (Vector2){paddle2.bounds.x, paddle2.bounds.y}, WHITE);
+    DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
+    DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
 };
 void scene_gameplay_destroy()

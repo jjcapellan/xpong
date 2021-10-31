@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "gameplay.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
