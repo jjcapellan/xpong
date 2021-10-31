@@ -52,6 +52,7 @@ void new_level();
 Sound fx_bounce1;
 Sound fx_bounce2;
 Sound fx_point;
+Sound fx_level;
 Font font;
 Texture2D texture_atlas; // Global
 
@@ -60,6 +61,7 @@ void scene_gameplay_init()
     fx_bounce1 = LoadSound("assets/bounce1.wav");
     fx_bounce2 = LoadSound("assets/bounce2.wav");
     fx_point = LoadSound("assets/point.wav");
+    fx_level = LoadSound("assets/level.wav");
     font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
     SetTextureFilter(font.texture, 0);
 
@@ -213,6 +215,7 @@ void ball_update(float deltaTime)
             level++;
             player_score = 0;
             npc_score = 0;
+            PlaySound(fx_level);
             new_level();
         }
         ball_reset(true);
@@ -327,5 +330,6 @@ void scene_gameplay_destroy()
     UnloadSound(fx_bounce1);
     UnloadSound(fx_bounce2);
     UnloadSound(fx_point);
+    UnloadSound(fx_level);
     UnloadFont(font);
 };
