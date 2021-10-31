@@ -3,7 +3,9 @@
 #endif
 #include "defs.h"
 #include "raylib.h"
+#include <time.h>
 #include <math.h>
+#include <stdlib.h>
 
 // Local types
 
@@ -14,23 +16,39 @@ struct Entity
     Vector2 velocity; // px/sec
 };
 
+typedef enum Npc_states
+{
+    THINKING,
+    READY,
+    IDLE,
+    UP,
+    DOWN
+} Paddle_state;
+
 // Local variables
 
 Rectangle paddle_frame_rect = PADDLE_FRAME_RECT;
 Rectangle ball_frame_rect = BALL_FRAME_RECT;
 Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
 Rectangle world_bounds = WORLD_BOUNDS;
-int ball_speed;
-int player_score;
-int npc_score;
-int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
-int level;
 
 struct Entity paddle1;
 struct Entity paddle2;
-struct Entity ball;
+Paddle_state npc_state;
+float npc_time_react;
+int npc_score;
+float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float npc_speed_factor;
 float paddle_speed;
+
+struct Entity ball;
+float ball_prev_vel_x;
+int ball_speed;
+
+int player_score;
+int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
+int level;
+
 Vector2 score_size;
 Vector2 level_text_size;
 
@@ -46,6 +64,8 @@ float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 void check_gameover();
 void new_level();
+float entity_get_y_center(struct Entity entity);
+void check_npc_event(float delta_time);
 
 // Resources
 
@@ -80,9 +100,13 @@ void scene_gameplay_init()
     ball_speed = BALL_SPEED;
 
     ball_reset(false);
+    ball_prev_vel_x = ball.velocity.x;
 
     npc_speed_factor = (NPC_MAX_SPEED_FACTOR - NPC_MIN_SPEED_FACTOR) / (paddle2.bounds.x - paddle1.bounds.x);
-    //score_size = MeasureText("00", SCORE_TEXT_SIZE);
+    npc_state = THINKING;
+    npc_time_react = NPC_MIN_TIME_REACTION + (drand48() * (0.8 - 0.1) + 0.1); // <--- adjust max min
+    npc_ball_prev_y_offset = 0;
+
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
     level_text_size = MeasureTextEx(font, "L 0", 24, -4);
 
@@ -129,6 +153,52 @@ void paddle1_update(float deltaTime)
 
 void paddle2_update(float deltaTime)
 {
+    check_npc_event(deltaTime);
+    if (npc_state == THINKING)
+    {
+        return;
+    }
+
+    if (npc_state == READY)
+    {
+        if (ball.velocity.x < 0)
+        {
+            npc_state = IDLE;
+        }
+        else
+        {
+            float y_offset = entity_get_y_center(ball) - entity_get_y_center(paddle2);
+            if (y_offset < 0)
+            {
+                npc_state = UP;
+            }
+            else if (y_offset > 0)
+            {
+                npc_state = DOWN;
+            }
+            else
+            {
+                npc_state = IDLE;
+            }
+        }
+    }
+
+    switch (npc_state)
+    {
+    case UP:
+        paddle2.velocity.y = -PADDLE_SPEED;
+        break;
+    case DOWN:
+        paddle2.velocity.y = PADDLE_SPEED;
+
+        break;
+    case IDLE:
+        paddle2.velocity.y = 0;
+        break;
+    }
+    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;
+
+    /*
     if (ball.velocity.x > 0)
     {
         if ((ball.bounds.y + ball.bounds.height / 2) < (paddle2.bounds.y + paddle2.bounds.height / 2))
@@ -141,7 +211,7 @@ void paddle2_update(float deltaTime)
         }
     }
 
-    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;
+    paddle2.bounds.y += paddle2.velocity.y * deltaTime * npc_speed_factor * ball.bounds.x;*/
 
     if (paddle2.bounds.y < 4)
     {
@@ -152,7 +222,34 @@ void paddle2_update(float deltaTime)
         paddle2.bounds.y = SCREEN_HEIGHT - 4 - paddle2.bounds.height;
     }
 
-    paddle2.velocity.y = 0;
+    //paddle2.velocity.y = 0;
+}
+
+void check_npc_event(float delta_time)
+{
+    float current_npc_ball_y_offset = entity_get_y_center(ball) - entity_get_y_center(paddle2);
+    if (npc_state == THINKING)
+    {
+        npc_time_react -= delta_time * CLOCKS_PER_SEC;
+    }
+    if (npc_time_react < 0)
+    {
+        npc_time_react = 0;
+        npc_state = READY;
+    }
+    if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
+    {
+        npc_state = THINKING;
+        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
+    }
+    if (ball_prev_vel_x * ball.velocity.x < 0)
+    {
+        npc_state = THINKING;
+        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
+    }
+
+    npc_ball_prev_y_offset = current_npc_ball_y_offset;
+    ball_prev_vel_x = ball.velocity.x;
 }
 
 void ball_update(float deltaTime)
@@ -237,6 +334,11 @@ void check_gameover()
     }
 }
 
+float entity_get_y_center(struct Entity entity)
+{
+    return entity.bounds.y + entity.bounds.height;
+}
+
 float vector2_get_angle(Vector2 v)
 {
     float angle = atan2f(v.y, v.x) * RAD2DEG;
@@ -313,6 +415,9 @@ void ball_reset(bool isPlayer)
     vector2_set_angle(&ball.velocity, angle, BALL_SPEED_START);
     if (isPlayer)
         ball.velocity.x *= -1;
+
+    npc_state = THINKING;
+    npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1;
 }
 
 void scene_gameplay_draw()
