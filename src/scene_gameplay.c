@@ -1,24 +1,19 @@
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 #include "defs.h"
 #include "gameplay.h"
-#include <time.h>
-#include <math.h>
-#include <stdlib.h>
 
-// GLOBAL
+
+//
+// GLOBALS
+//
 
 Entity player;
 Entity npc;
 Entity ball;
 
-// Local variables
 
-Rectangle ball_frame_rect = BALL_FRAME_RECT;
-Rectangle field_frame_rect = (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_WIDTH};
-
-
+//
+// LOCAL VARIABLES
+//
 
 Vector2 score_size;
 Vector2 level_text_size;
@@ -30,14 +25,17 @@ int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level;
 
 
-
-// Local functions
+//
+// LOCAL FUNCTIONS
+//
 
 void input_update();
 void check_gameover();
 void new_level();
 
-// Resources
+//
+// RESOURCES
+//
 
 Sound fx_bounce1;
 Sound fx_bounce2;
@@ -46,6 +44,10 @@ Sound fx_level;
 Font font;
 Texture2D texture_atlas; // Global
 
+
+//
+// FUNCTIONS
+//
 void scene_gameplay_init()
 {
     fx_bounce1 = LoadSound("assets/bounce1.wav");
@@ -70,12 +72,12 @@ void scene_gameplay_init()
     level = 1;
 }
 
-void scene_gameplay_update(float deltaTime)
+void scene_gameplay_update(float delta_time)
 {
     input_update();
-    player_update(deltaTime);
-    npc_update(deltaTime);
-    ball_update(deltaTime);
+    player_update(delta_time);
+    npc_update(delta_time);
+    ball_update(delta_time);
 };
 
 void input_update()
@@ -123,7 +125,7 @@ void event_npc_score()
     ball_reset(false);
 }
 
-void new_level()
+void new_level() // TODO
 {
     ball_speed *= 1.10;
     //npc_speed_factor *= 1.15;
@@ -140,7 +142,7 @@ void check_gameover()
 
 void scene_gameplay_draw()
 {
-    DrawTextureRec(texture_atlas, field_frame_rect, (Vector2){0, 0}, WHITE);
+    DrawTextureRec(texture_atlas, FIELD_FRAME_RECT, (Vector2){0, 0}, WHITE);
     DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);

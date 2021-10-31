@@ -8,24 +8,7 @@
 
 #define TRANSITION_DURATION 0.8 // secs, transition duration between scenes
 
-#define WORLD_BOUNDS \
-    (Rectangle) { 0, 4, 640, 480 - 8 } // {px,px,px,px}
 
-
-
-#define BALL_FRAME_RECT \
-    (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
-#define BALL_SPEED 380              // px/sec
-#define BALL_SPEED_START 190        // px/sec
-#define BALL_MAX_ANGLE 65           // degrees
-
-#define SCORE_TEXT_COLOR \
-    (Color) { 249, 168, 117, 80 } // Color
-#define LEVEL_TEXT_COLOR \
-    (Color) { 249, 168, 117, 255 } // Color
-#define SCORE_TEXT_SIZE 144        // px
-
-#define POINTS_PER_LEVEL 3 // int
 
 
 
