@@ -3,6 +3,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+//
+// GLOBALS
+//
+
+Entity npc = (Entity){0};
+Entity ball;
+
+//
+// LOCAL TYPES
+//
+
 typedef enum Npc_states
 {
     THINKING,
@@ -12,24 +23,29 @@ typedef enum Npc_states
     DOWN
 } Npc_state;
 
-/** 
- * LOCAL FUNCTION DECLARATION
-*/
+//
+// LOCAL FUNCTIONS
+//
+
 void npc_update(float delta_time);
 void check_npc_event(float delta_time);
 void npc_set_speed_factor(float min, float max);
 float entity_get_y_center(Entity entity);
 
-Entity npc = (Entity){0};
+//
+// LOCAL VARIABLES
+//
+
 float npc_speed_factor;
 float npc_speed;
 float npc_time_react;
 float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float ball_prev_vel_x;
-
 Npc_state npc_state;
 
-Entity ball; // Global
+//
+// FUNCTIONS
+//
 
 void npc_init()
 {
