@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <stdlib.h>
-#include <time.h>
 
 //
 // GLOBALS
@@ -31,6 +30,7 @@ void npc_update(float delta_time);
 void check_npc_event(float delta_time);
 void npc_set_speed_factor(float min, float max);
 float entity_get_y_center(Entity entity);
+float npc_get_time_react();
 
 //
 // LOCAL VARIABLES
@@ -39,6 +39,8 @@ float entity_get_y_center(Entity entity);
 float npc_speed_factor;
 float npc_speed;
 float npc_time_react;
+float npc_min_time_react;
+float npc_max_time_react;
 float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float ball_prev_vel_x;
 Npc_state npc_state;
@@ -60,7 +62,9 @@ void npc_init()
     npc_speed = PADDLE_SPEED;
 
     npc_state = THINKING;
-    npc_time_react = NPC_MIN_TIME_REACTION + (drand48() * (0.8 - 0.1) + 0.1); // <--- adjust max min
+    npc_min_time_react = NPC_MIN_TIME_REACTION;
+    npc_max_time_react = NPC_MAX_TIME_REACTION;
+    npc_time_react = npc_get_time_react();
     npc_ball_prev_y_offset = 0;
     ball_prev_vel_x = 0;
 }
@@ -128,7 +132,7 @@ void check_npc_event(float delta_time)
     float current_npc_ball_y_offset = entity_get_y_center(ball) - entity_get_y_center(npc);
     if (npc_state == THINKING)
     {
-        npc_time_react -= delta_time * CLOCKS_PER_SEC;
+        npc_time_react -= delta_time;
     }
     if (npc_time_react < 0)
     {
@@ -138,12 +142,12 @@ void check_npc_event(float delta_time)
     if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
     {
         npc_state = THINKING;
-        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
+        npc_time_react = npc_get_time_react();
     }
     if (ball_prev_vel_x * ball.velocity.x < 0)
     {
         npc_state = THINKING;
-        npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1; // <--- adjust
+        npc_time_react = npc_get_time_react();
     }
 
     npc_ball_prev_y_offset = current_npc_ball_y_offset;
@@ -155,6 +159,11 @@ float entity_get_y_center(Entity entity)
     return entity.bounds.y + entity.bounds.height;
 }
 
+float npc_get_time_react()
+{
+    return (drand48() * (npc_max_time_react - npc_min_time_react) + npc_min_time_react);
+}
+
 void npc_set_speed_factor(float min, float max)
 {
     // TODO
@@ -163,5 +172,5 @@ void npc_set_speed_factor(float min, float max)
 void npc_reset()
 {
     npc_state = THINKING;
-    npc_time_react = NPC_MIN_TIME_REACTION + drand48() * (0.8 - 0.1) + 0.1;
+    npc_time_react = npc_get_time_react();
 }

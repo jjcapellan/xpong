@@ -19,6 +19,7 @@
 #define NPC_MIN_SPEED_FACTOR 0.1   // float, min multiplier applied to normal speed
 #define NPC_MAX_SPEED_FACTOR 1.1   // float, max multiplier applied to normal speed
 #define NPC_MIN_TIME_REACTION 0.2  // seconds
+#define NPC_MAX_TIME_REACTION 0.8  // seconds
 
 #define BALL_FRAME_RECT \
     (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
