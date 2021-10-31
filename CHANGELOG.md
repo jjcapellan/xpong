@@ -1,3 +1,6 @@
+## WIP
+* Added: fx sounds.
+
 ## v0.1.0-alpha
 * Improved: collision between ball and paddle produces a bounce angle proportional to impact distance to the paddle center.
 * Added: npc paddle movement.
