@@ -76,5 +76,6 @@ void event_player_score();
 extern Entity player;
 extern Entity npc;
 extern Entity ball;
+extern ball_destination;
 
 #endif

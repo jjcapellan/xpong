@@ -1,22 +1,37 @@
 #include "defs.h"
 #include "gameplay.h"
 
-/**
- * LOCAL FUNCTIONS
- */
+//
+//LOCAL FUNCTIONS
+//
+
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 void collision_ball_player();
 void collision_ball_npc();
 
+//
+// GLOBALS
+//
+
 Entity ball = {0};
+Vector2 ball_destination = {0};
 Entity player;
 Entity npc;
+
+//
+// LOCAL VARIABLES
+//
 
 int ball_speed;
 Rectangle world_bounds = WORLD_BOUNDS;
 
-void ball_init(){
+//
+// FUNCTIONS
+//
+
+void ball_init()
+{
     ball_speed = BALL_SPEED;
     ball_reset(false);
 }
@@ -58,11 +73,11 @@ void ball_update(float deltaTime)
 
     // SCORE EVENTS
     if (ball.bounds.x < 0)
-    {        
+    {
         event_npc_score();
     }
     if (ball.bounds.x > SCREEN_WIDTH)
-    {        
+    {
         event_player_score();
     }
 }
@@ -117,6 +132,18 @@ void collision_ball_npc()
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
 }
 
+// Calcs ball.y for ball.x = npc.x if there were not wall bounces
+void set_ball_destination()
+{
+    float m, x, y;
+    m = ball.velocity.y / ball.velocity.x;
+    x = world_bounds.x + world_bounds.width - PADDLE_H_MARGIN;
+    y = ball.bounds.y - m * ball.bounds.x + m * x;
+
+    ball_destination.x = x;
+    ball_destination.y = y;
+}
+
 void ball_reset(bool isPlayer)
 {
     ball.frame_rect = BALL_FRAME_RECT;
@@ -146,4 +173,3 @@ void vector2_set_angle(Vector2 *v, float angle, float length)
     v->x = cosf(angle) * length;
     v->y = sinf(angle) * length;
 }
-
