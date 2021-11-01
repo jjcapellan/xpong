@@ -15,11 +15,11 @@
     (Rectangle) { 0, 480, 12, 72 } // {px,px,px,px} Rectangle frame on sprite sheet
 #define PADDLE_H_MARGIN 12         // px, horizontal margin to screen border
 #define PADDLE_MAX_ANGLE 40        // degrees, angle added to ball velocity vector when collide paddle edges
-#define PADDLE_SPEED 260           // px/sec
-#define NPC_MIN_SPEED_FACTOR 0.1   // float, min multiplier applied to normal speed
-#define NPC_MAX_SPEED_FACTOR 1.1   // float, max multiplier applied to normal speed
-#define NPC_MIN_TIME_REACTION 0.2  // seconds
-#define NPC_MAX_TIME_REACTION 0.8  // seconds
+#define PADDLE_SPEED 280           // px/sec
+#define NPC_MIN_SPEED_FACTOR 0.3   // float, min multiplier applied to normal speed
+#define NPC_MAX_SPEED_FACTOR 1.2   // float, max multiplier applied to normal speed
+#define NPC_MIN_TIME_REACTION 0.0  // seconds
+#define NPC_MAX_TIME_REACTION 0.4  // seconds
 
 #define BALL_FRAME_RECT \
     (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet

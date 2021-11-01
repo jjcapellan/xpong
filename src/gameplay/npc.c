@@ -1,6 +1,7 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 //
 // GLOBALS
@@ -43,6 +44,7 @@ float npc_min_time_react;
 float npc_max_time_react;
 float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float ball_prev_vel_x;
+float ball_prev_vel_y;
 Npc_state npc_state;
 
 //
@@ -67,6 +69,7 @@ void npc_init()
     npc_time_react = npc_get_time_react();
     npc_ball_prev_y_offset = 0;
     ball_prev_vel_x = 0;
+    ball_prev_vel_x = 0;
 }
 
 void npc_update(float delta_time)
@@ -74,7 +77,7 @@ void npc_update(float delta_time)
     check_npc_event(delta_time);
     if (npc_state == THINKING)
     {
-        return;
+        npc.velocity.y = 0;
     }
 
     if (npc_state == READY)
@@ -101,12 +104,16 @@ void npc_update(float delta_time)
         }
     }
 
+    float multiplier = 1;
+
     switch (npc_state)
     {
     case UP:
+        multiplier = NPC_MAX_SPEED_FACTOR + npc_speed_factor * (npc.bounds.x - ball.bounds.x);
         npc.velocity.y = -PADDLE_SPEED;
         break;
     case DOWN:
+        multiplier = NPC_MAX_SPEED_FACTOR + npc_speed_factor * (npc.bounds.x - ball.bounds.x);
         npc.velocity.y = PADDLE_SPEED;
 
         break;
@@ -114,16 +121,19 @@ void npc_update(float delta_time)
         npc.velocity.y = 0;
         break;
     }
-    float multiplier = NPC_MAX_SPEED_FACTOR + npc_speed_factor * (npc.bounds.x - ball.bounds.x);
-    npc.bounds.y += npc.velocity.y * delta_time * multiplier;
+
+    npc.velocity.y *= multiplier;
+    npc.bounds.y += npc.velocity.y * delta_time;
 
     if (npc.bounds.y < 4)
     {
         npc.bounds.y = 4;
+        npc.velocity.y = 0;
     }
     else if (npc.bounds.y > (SCREEN_HEIGHT - 4 - npc.bounds.height))
     {
         npc.bounds.y = SCREEN_HEIGHT - 4 - npc.bounds.height;
+        npc.velocity.y = 0;
     }
 }
 
@@ -138,8 +148,9 @@ void check_npc_event(float delta_time)
     {
         npc_time_react = 0;
         npc_state = READY;
+        return;
     }
-    if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
+    if (ball_prev_vel_y * ball.velocity.y < 0)
     {
         npc_state = THINKING;
         npc_time_react = npc_get_time_react();
@@ -147,11 +158,24 @@ void check_npc_event(float delta_time)
     if (ball_prev_vel_x * ball.velocity.x < 0)
     {
         npc_state = THINKING;
-        npc_time_react = npc_get_time_react();
+        npc_time_react = npc_get_time_react() + 0.1;
+    }
+    if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
+    {
+        if ((npc.bounds.x - ball.bounds.x) > npc.bounds.height)
+        {
+            npc_state = THINKING;
+            npc_time_react = 0.1;
+        }
+        else
+        {
+            npc_state = READY;
+        }
     }
 
     npc_ball_prev_y_offset = current_npc_ball_y_offset;
     ball_prev_vel_x = ball.velocity.x;
+    ball_prev_vel_y = ball.velocity.y;
 }
 
 float entity_get_y_center(Entity entity)
