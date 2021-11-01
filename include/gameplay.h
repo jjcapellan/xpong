@@ -16,14 +16,12 @@
 #define PADDLE_H_MARGIN 12         // px, horizontal margin to screen border
 #define PADDLE_MAX_ANGLE 40        // degrees, angle added to ball velocity vector when collide paddle edges
 #define PADDLE_SPEED 280           // px/sec
-#define NPC_MIN_SPEED_FACTOR 0.3   // float, min multiplier applied to normal speed
-#define NPC_MAX_SPEED_FACTOR 1.2   // float, max multiplier applied to normal speed
 #define NPC_MIN_TIME_REACTION 0.0  // seconds
-#define NPC_MAX_TIME_REACTION 0.4  // seconds
+#define NPC_MAX_TIME_REACTION 0.3  // seconds
 
 #define BALL_FRAME_RECT \
     (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
-#define BALL_SPEED 380              // px/sec
+#define BALL_SPEED 480              // px/sec
 #define BALL_SPEED_START 190        // px/sec
 #define BALL_MAX_ANGLE 65           // degrees
 #define WORLD_BOUNDS \
@@ -58,6 +56,7 @@ void player_update(float delta_time);
 
 void npc_init();
 void npc_update(float delta_time);
+void npc_set_current_target();
 void npc_reset();
 
 void ball_init();
@@ -76,6 +75,6 @@ void event_player_score();
 extern Entity player;
 extern Entity npc;
 extern Entity ball;
-extern ball_destination;
+extern Vector2 ball_destination;
 
 #endif

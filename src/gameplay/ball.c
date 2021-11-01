@@ -46,12 +46,14 @@ void ball_update(float deltaTime)
     {
         ball.bounds.y = world_bounds.y + world_bounds.height - ball.bounds.height;
         ball.velocity.y *= -1;
+        set_ball_destination();
         event_wall();
     }
     if (ball.bounds.y < world_bounds.y)
     {
         ball.bounds.y = world_bounds.y;
         ball.velocity.y *= -1;
+        set_ball_destination();
         event_wall();
     }
 
@@ -105,6 +107,7 @@ void collision_ball_player()
         }
     }
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
+    set_ball_destination();
 }
 
 void collision_ball_npc()
@@ -152,9 +155,19 @@ void ball_reset(bool isPlayer)
     float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
     vector2_set_angle(&ball.velocity, angle, BALL_SPEED_START);
     if (isPlayer)
+    {
         ball.velocity.x *= -1;
-
-    npc_reset();
+        set_ball_destination();
+        npc_set_current_target();
+        npc_reset();
+    }
+    else
+    {
+        set_ball_destination();
+        npc_set_current_target();
+        npc_reset();
+    }
+    
 }
 
 float vector2_get_angle(Vector2 v)

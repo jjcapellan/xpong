@@ -9,6 +9,7 @@
 
 Entity npc = (Entity){0};
 Entity ball;
+Vector2 ball_destination;
 
 //
 // LOCAL TYPES
@@ -18,9 +19,7 @@ typedef enum Npc_states
 {
     THINKING,
     READY,
-    IDLE,
-    UP,
-    DOWN
+    IDLE
 } Npc_state;
 
 //
@@ -32,6 +31,8 @@ void check_npc_event(float delta_time);
 void npc_set_speed_factor(float min, float max);
 float entity_get_y_center(Entity entity);
 float npc_get_time_react();
+float npc_ease(float percent, float x0, float x1);
+
 
 //
 // LOCAL VARIABLES
@@ -46,6 +47,11 @@ float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float ball_prev_vel_x;
 float ball_prev_vel_y;
 Npc_state npc_state;
+Vector2 npc_current_target;
+float easing_duration;
+float easing_elapsed_time;
+float easing_x0;
+float easing_x1;
 
 //
 // FUNCTIONS
@@ -59,17 +65,15 @@ void npc_init()
     npc.bounds = (Rectangle){SCREEN_WIDTH - (width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - height / 2, width, height};
     npc.velocity = (Vector2){0, 0};
 
-    // velocity_multiplier = min_multiplier + npc_speed_factor * distance_ball_npc
-    npc_speed_factor = (NPC_MIN_SPEED_FACTOR - NPC_MAX_SPEED_FACTOR) / (npc.bounds.x - PADDLE_H_MARGIN);
     npc_speed = PADDLE_SPEED;
 
-    npc_state = THINKING;
+    npc_state = READY;
     npc_min_time_react = NPC_MIN_TIME_REACTION;
     npc_max_time_react = NPC_MAX_TIME_REACTION;
     npc_time_react = npc_get_time_react();
     npc_ball_prev_y_offset = 0;
     ball_prev_vel_x = 0;
-    ball_prev_vel_x = 0;
+    ball_prev_vel_y = 0;
 }
 
 void npc_update(float delta_time)
@@ -77,69 +81,34 @@ void npc_update(float delta_time)
     check_npc_event(delta_time);
     if (npc_state == THINKING)
     {
-        npc.velocity.y *= 0.50;
+        // TODO;
     }
 
     if (npc_state == READY)
     {
-        if (ball.velocity.x < 0)
-        {
-            npc_state = IDLE;
-        }
-        else
-        {
-            float y_offset = entity_get_y_center(ball) - entity_get_y_center(npc);
-            if (y_offset < 0)
-            {
-                npc_state = UP;
-            }
-            else if (y_offset > 0)
-            {
-                npc_state = DOWN;
-            }
-            else
-            {
-                npc_state = IDLE;
-            }
-        }
+        if (ball_destination.y != npc_current_target.y && ball.velocity.x > 0)
+            npc_set_current_target();
     }
 
-    float multiplier = 1;
-
-    switch (npc_state)
+    if (npc_current_target.x != 0 && easing_elapsed_time < easing_duration)
     {
-    case UP:
-        multiplier = NPC_MAX_SPEED_FACTOR + npc_speed_factor * (npc.bounds.x - ball.bounds.x);
-        npc.velocity.y = -PADDLE_SPEED;
-        break;
-    case DOWN:
-        multiplier = NPC_MAX_SPEED_FACTOR + npc_speed_factor * (npc.bounds.x - ball.bounds.x);
-        npc.velocity.y = PADDLE_SPEED;
-
-        break;
-    case IDLE:
-        npc.velocity.y *= 0.50;
-        break;
+        easing_elapsed_time += delta_time;
+        npc.bounds.y = npc_ease(easing_elapsed_time / easing_duration, easing_x0, easing_x1);
     }
-
-    npc.velocity.y *= multiplier;
-    npc.bounds.y += npc.velocity.y * delta_time;
 
     if (npc.bounds.y < 4)
     {
         npc.bounds.y = 4;
-        npc.velocity.y = 0;
     }
     else if (npc.bounds.y > (SCREEN_HEIGHT - 4 - npc.bounds.height))
     {
         npc.bounds.y = SCREEN_HEIGHT - 4 - npc.bounds.height;
-        npc.velocity.y = 0;
     }
 }
 
 void check_npc_event(float delta_time)
 {
-    float current_npc_ball_y_offset = entity_get_y_center(ball) - entity_get_y_center(npc);
+
     if (npc_state == THINKING)
     {
         npc_time_react -= delta_time;
@@ -150,32 +119,48 @@ void check_npc_event(float delta_time)
         npc_state = READY;
         return;
     }
+
+    // wall bounce
     if (ball_prev_vel_y * ball.velocity.y < 0)
     {
         npc_state = THINKING;
         npc_time_react = npc_get_time_react();
     }
-    if (ball_prev_vel_x * ball.velocity.x < 0)
+
+    // player paddle bounce
+    if (ball_prev_vel_x * ball.velocity.x < 0 && ball.velocity.x > 0)
     {
         npc_state = THINKING;
-        npc_time_react = npc_get_time_react() + 0.1;
-    }
-    if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
-    {
-        if ((npc.bounds.x - ball.bounds.x) > SCREEN_WIDTH/2)
-        {
-            npc_state = THINKING;
-            npc_time_react = 0.1;
-        }
-        else
-        {
-            npc_state = READY;
-        }
+        npc_time_react = npc_get_time_react();
     }
 
-    npc_ball_prev_y_offset = current_npc_ball_y_offset;
     ball_prev_vel_x = ball.velocity.x;
     ball_prev_vel_y = ball.velocity.y;
+}
+
+
+// Easing function inOutCubic
+float npc_ease(float percent, float x0, float x1)
+{
+    float p = percent;
+    float factor = p < 0.5 ? 4 * p * p * p : 1 - (-2 * p + 2) * (-2 * p + 2) * (-2 * p + 2) / 2;
+    return x0 + (x1 - x0) * factor;
+}
+
+void npc_set_current_target()
+{
+    npc_current_target.x = ball_destination.x;
+    if (ball_destination.y < 4)
+        ball_destination.y = 4 + npc.bounds.height / 2;
+    if (ball_destination.y > (480 - 4))
+        ball_destination.y = (480 - 4) - npc.bounds.height;
+
+    npc_current_target.y = ball_destination.y;
+    easing_x0 = npc.bounds.y;
+    easing_x1 = npc_current_target.y - npc.bounds.height / 2;
+    easing_duration = abs(easing_x1 - easing_x0) / (npc_speed * 0.8);
+    easing_elapsed_time = 0;
+    printf("\nx: %f, y: %f   ", npc_current_target.x, npc_current_target.y);
 }
 
 float entity_get_y_center(Entity entity)
@@ -186,11 +171,6 @@ float entity_get_y_center(Entity entity)
 float npc_get_time_react()
 {
     return (drand48() * (npc_max_time_react - npc_min_time_react) + npc_min_time_react);
-}
-
-void npc_set_speed_factor(float min, float max)
-{
-    // TODO
 }
 
 void npc_reset()
