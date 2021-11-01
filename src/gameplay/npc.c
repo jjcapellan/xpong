@@ -77,7 +77,7 @@ void npc_update(float delta_time)
     check_npc_event(delta_time);
     if (npc_state == THINKING)
     {
-        npc.velocity.y = 0;
+        npc.velocity.y *= 0.50;
     }
 
     if (npc_state == READY)
@@ -118,7 +118,7 @@ void npc_update(float delta_time)
 
         break;
     case IDLE:
-        npc.velocity.y = 0;
+        npc.velocity.y *= 0.50;
         break;
     }
 
@@ -162,7 +162,7 @@ void check_npc_event(float delta_time)
     }
     if (npc_ball_prev_y_offset * current_npc_ball_y_offset < 0)
     {
-        if ((npc.bounds.x - ball.bounds.x) > npc.bounds.height)
+        if ((npc.bounds.x - ball.bounds.x) > SCREEN_WIDTH/2)
         {
             npc_state = THINKING;
             npc_time_react = 0.1;
