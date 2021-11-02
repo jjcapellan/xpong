@@ -20,6 +20,11 @@ PROJECT_SOURCE_PATH   ?= ./src
 PROJECT_INCLUDE_PATH  ?= ./include
 PROJECT_ASSETS_PATH   = ./dist/desktop/assets@/assets
 
+# Web shell path
+# Default raylib shell $(RAYLIB_PATH)/src/shell.html
+# Default shell $(PROJECT_ROOT_PATH)/shell.html 
+WEB_SHELL_PATH ?= $(PROJECT_ROOT_PATH)/shell.html
+
 # Library type used for raylib: STATIC (.a) or SHARED (.so/.dll)
 RAYLIB_LIBTYPE        ?= STATIC
 
@@ -88,12 +93,12 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
 	ifeq ($(BUILD_MODE),DEBUG)
-		CFLAGS += -g -s ASSERTIONS=1 --profiling
+		CFLAGS += -g -DDEBUG -s ASSERTIONS=1 --profiling
 	else
 		CFLAGS += -Os
 	endif
 	CFLAGS += -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 \
-	--preload-file $(PROJECT_ASSETS_PATH) --shell-file $(RAYLIB_PATH)/src/shell.html
+	--preload-file $(PROJECT_ASSETS_PATH) --shell-file $(WEB_SHELL_PATH)
 endif
 
 # ************* OUTPUT FILE EXTENSION
