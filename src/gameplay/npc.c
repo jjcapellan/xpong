@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 //
 // GLOBALS
