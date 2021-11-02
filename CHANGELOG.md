@@ -4,6 +4,7 @@
 * Change: npc behavior based on ball position prediction.
 * Change: npc movement based on easing function.
 * Change: some temporal adjustments in gameplay params.
+* Fix: new fps value in emscripten_set_main_loop, now the game works smooth in web browser.
 
 ## v0.1.0-alpha
 * Improved: collision between ball and paddle produces a bounce angle proportional to impact distance to the paddle center.
