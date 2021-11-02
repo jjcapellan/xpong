@@ -1,75 +1,60 @@
+<!-- shell.html based on https://github.com/raysan5/raylib/blob/master/src/shell.html -->>
 <!doctype html>
 <html lang="en-us">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    
-    <title>raylib HTML5 GAME</title>
-    
-    <meta name="title" content="raylib HTML5 GAME">
-    <meta name="description" content="New HTML5 videogame, developed using raylib videogames library">
-    <meta name="keywords" content="raylib, games, html5, programming, C, C++, library, learn, videogames">
-    <meta name="viewport" content="width=device-width">
-    
-    <!-- Open Graph metatags for sharing -->
-    <meta property="og:title" content="raylib HTML5 GAME">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image" content="https://www.raylib.com/common/img/raylib_logo.png">
-    <meta property="og:site_name" content="raylib.com">
-    <meta property="og:url" content="https://www.raylib.com/games.html">
-    <meta property="og:description" content="New HTML5 videogame, developed using raylib videogames library">
 
-    <!-- Twitter metatags for sharing -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="@raysan5">
-    <meta name="twitter:title" content="raylib HTML5 GAME">
-    <meta name="twitter:image" content="https://www.raylib.com/common/raylib_logo.png">
-    <meta name="twitter:url" content="https://www.raylib.com/games.html">
-    <meta name="twitter:description" content="New HTML5 videogame, developed using raylib videogames library">
-    
+    <title>Raylib test game</title>
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="https://www.raylib.com/favicon.ico">
-    
+
     <style>
-      body { 
-        font-family: arial; 
-        margin: 0; 
-        padding: none;
-      }
-      
-      .emscripten { 
-        border: 0px none; 
-        background: black; 
-          }     
-      div.emscripten_border { 
-    background-color: #2f1b23;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    justify-content: center; 
-      }
-      #progress {
-          position: absolute;
-          bottom: 20px;
-          right: 20px;
-          width: 200px;
-          height: 16px;
-      }
+        body {
+            font-family: arial;
+            margin: 0;
+            padding: none;
+        }
+
+        .emscripten {
+            border: 0px none;
+            background: black;
+        }
+
+        .emscripten_border {
+            background-color: #2f1b23;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            justify-content: center;
+        }
+
+        #progress {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 16px;
+        }
     </style>
-  </head>
-  <body>
-    
+</head>
+
+<body>
+
     <div class="emscripten_border">
-      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
     </div>
     <progress id="progress" value="0" max="100"></progress>
 
-    <script type='text/javascript' src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js/dist/FileSaver.min.js"> </script>
+    <script type='text/javascript'
+        src="https://cdn.jsdelivr.net/gh/eligrey/FileSaver.js/dist/FileSaver.min.js"> </script>
     <script type='text/javascript'>
         function saveFileFromMEMFSToDisk(memoryFSname, localFSname)     // This can be called by C/C++ code
         {
@@ -94,71 +79,71 @@
         var Module = {
             preRun: [],
             postRun: [],
-            print: (function() {
-                
-                return function(text) {
+            print: (function () {
+
+                return function (text) {
                     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
                     console.log(text);
                 };
             })(),
-            printErr: function(text) {
-                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');                
+            printErr: function (text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
                 console.error(text);
             },
-            canvas: (function() {
+            canvas: (function () {
                 var canvas = document.querySelector('#canvas');
 
                 // As a default initial behavior, pop up an alert when webgl context is lost.
                 // To make your application robust, you may want to override this behavior before shipping!
                 // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-                canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+                canvas.addEventListener("webglcontextlost", function (e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
 
                 return canvas;
             })(),
-            setStatus: function(text) {
+            setStatus: function (text) {
                 if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
                 if (text === Module.setStatus.last.text) return;
                 console.log(text);
                 var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
                 var now = Date.now();
-              
+
                 Module.setStatus.last.time = now;
                 Module.setStatus.last.text = text;
-                
+
                 if (m) {
                     text = m[1];
-                    progressElement.value = parseInt(m[2])*100;
-                    progressElement.max = parseInt(m[4])*100;
+                    progressElement.value = parseInt(m[2]) * 100;
+                    progressElement.max = parseInt(m[4]) * 100;
                 }
 
-                if(text = "Running..."){
+                if (text = "Running...") {
                     progressElement.remove();
                 }
             },
             totalDependencies: 0,
-            monitorRunDependencies: function(left) {
+            monitorRunDependencies: function (left) {
                 this.totalDependencies = Math.max(this.totalDependencies, left);
-                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
             },
             //noInitialRun: true
         };
-        
+
         Module.setStatus('Downloading...');
-        
-        window.onerror = function() {
+
+        window.onerror = function () {
             Module.setStatus('Exception thrown, see JavaScript console');
             spinnerElement.style.display = 'none';
-            Module.setStatus = function(text) { if (text) Module.printErr('[post-exception status] ' + text); };
+            Module.setStatus = function (text) { if (text) Module.printErr('[post-exception status] ' + text); };
         };
     </script>
-    
+
     <!-- REF: https://developers.google.com/web/updates/2018/11/web-audio-autoplay -->
     <script type='text/javascript'>
         var audioBtn = document.querySelector('#btn-audio');
-        
+
         // An array of all contexts to resume on the page
         const audioContexList = [];
-        (function() {
+        (function () {
             // A proxy object to intercept AudioContexts and 
             // add them to the array for tracking and resuming later
             self.AudioContext = new Proxy(self.AudioContext, {
@@ -177,11 +162,12 @@
                 if (ctx.state == "suspended") { ctx.resume(); resumed = true; }
                 else if (ctx.state == "running") ctx.suspend();
             });
-            
+
             if (resumed) audioBtn.value = "🔇 SUSPEND";
             else audioBtn.value = "🔈 RESUME";
         }
     </script>
     {{{ SCRIPT }}}
-  </body>
+</body>
+
 </html>
