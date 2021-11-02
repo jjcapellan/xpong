@@ -28,7 +28,6 @@ typedef enum Npc_states
 
 void npc_update(float delta_time);
 void check_npc_event(float delta_time);
-void npc_set_speed_factor(float min, float max);
 float entity_get_y_center(Entity entity);
 float npc_get_time_react();
 float npc_ease(float percent, float x0, float x1);
@@ -38,12 +37,10 @@ float npc_ease(float percent, float x0, float x1);
 // LOCAL VARIABLES
 //
 
-float npc_speed_factor;
 float npc_speed;
 float npc_time_react;
 float npc_min_time_react;
 float npc_max_time_react;
-float npc_ball_prev_y_offset; // difference (ball center y - paddle center y)
 float ball_prev_vel_x;
 float ball_prev_vel_y;
 Npc_state npc_state;
@@ -71,7 +68,6 @@ void npc_init()
     npc_min_time_react = NPC_MIN_TIME_REACTION;
     npc_max_time_react = NPC_MAX_TIME_REACTION;
     npc_time_react = npc_get_time_react();
-    npc_ball_prev_y_offset = 0;
     ball_prev_vel_x = 0;
     ball_prev_vel_y = 0;
 }
@@ -90,8 +86,9 @@ void npc_update(float delta_time)
             npc_set_current_target();
     }
 
-    if (npc_current_target.x != 0 && easing_elapsed_time < easing_duration)
-    {
+    if (npc_current_target.x != 0 && easing_elapsed_time < easing_duration && ball.velocity.x > 0)
+    {      
+        
         easing_elapsed_time += delta_time;
         npc.bounds.y = npc_ease(easing_elapsed_time / easing_duration, easing_x0, easing_x1);
     }
@@ -160,7 +157,6 @@ void npc_set_current_target()
     easing_x1 = npc_current_target.y - npc.bounds.height / 2;
     easing_duration = abs(easing_x1 - easing_x0) / (npc_speed * 0.8);
     easing_elapsed_time = 0;
-    printf("\nx: %f, y: %f   ", npc_current_target.x, npc_current_target.y);
 }
 
 float entity_get_y_center(Entity entity)
