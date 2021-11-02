@@ -1,5 +1,9 @@
 ## WIP
 * Added: fx sounds.
+* Added: npc reaction time.
+* Change: npc behavior based on ball position prediction.
+* Change: npc movement based on easing function.
+* Change: some temporal adjustments in gameplay params.
 
 ## v0.1.0-alpha
 * Improved: collision between ball and paddle produces a bounce angle proportional to impact distance to the paddle center.
