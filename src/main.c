@@ -24,7 +24,8 @@ int main()
     scene_title_init();
 
 #if defined(PLATFORM_WEB)
-    emscripten_set_main_loop(run_frame, 60, 1);
+    // https://emscripten.org/docs/api_reference/emscripten.h.html#c.emscripten_set_main_loop
+    emscripten_set_main_loop(run_frame, -1, 1);
 #else
     while (!WindowShouldClose())
     {
