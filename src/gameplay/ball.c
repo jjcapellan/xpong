@@ -23,7 +23,7 @@ Entity npc;
 // LOCAL VARIABLES
 //
 
-int ball_speed;
+float ball_speed = 0;
 Rectangle world_bounds = WORLD_BOUNDS;
 
 //

@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 
-
 //
 // GLOBALS
 //
@@ -10,6 +9,10 @@ Entity player;
 Entity npc;
 Entity ball;
 
+#ifdef DEBUG
+float npc_speed;
+float npc_max_time_react;
+#endif
 
 //
 // LOCAL VARIABLES
@@ -19,11 +22,10 @@ Vector2 score_size;
 Vector2 level_text_size;
 int npc_score;
 float paddle_speed;
-int ball_speed;
+float ball_speed;
 int player_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level;
-
 
 //
 // LOCAL FUNCTIONS
@@ -43,7 +45,6 @@ Sound fx_point;
 Sound fx_level;
 Font font;
 Texture2D texture_atlas; // Global
-
 
 //
 // FUNCTIONS
@@ -90,6 +91,64 @@ void input_update()
     {
         player.velocity.y = paddle_speed;
     }
+
+#ifdef DEBUG
+    // NPC SPEED
+    if (IsKeyReleased(KEY_S))
+    {
+        npc_speed += 10;
+    }
+    else if (IsKeyReleased(KEY_A))
+    {
+        npc_speed -= 10;
+    }
+    if (npc_speed > 1000)
+        npc_speed = 1000;
+    if (npc_speed < 100)
+        npc_speed = 100;
+
+    // NPC TIME REACTION
+    if (IsKeyReleased(KEY_F))
+    {
+        npc_max_time_react += 0.1f;
+    }
+    else if (IsKeyReleased(KEY_D))
+    {
+        npc_max_time_react -= 0.1;
+    }
+    if (npc_max_time_react > 1.2f)
+        npc_max_time_react = 1.2f;
+    if (npc_max_time_react < 0)
+        npc_max_time_react = 0;
+
+    // PLAYER SPEED
+    if (IsKeyReleased(KEY_H))
+    {
+        paddle_speed += 10;
+    }
+    else if (IsKeyReleased(KEY_G))
+    {
+        paddle_speed -= 10;
+    }
+    if (paddle_speed > 1000)
+        paddle_speed = 1000;
+    if (paddle_speed < 100)
+        paddle_speed = 100;
+
+    // BALL SPEED
+    if (IsKeyReleased(KEY_K))
+    {
+        ball_speed += 10;
+    }
+    else if (IsKeyReleased(KEY_J))
+    {
+        ball_speed -= 10;
+    }
+    if (ball_speed > 2000)
+        ball_speed = 2000;
+    if (ball_speed < 100)
+        ball_speed = 100;
+#endif
 }
 
 void event_wall()
@@ -146,6 +205,13 @@ void scene_gameplay_draw()
     DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
+#ifdef DEBUG
+    DrawText(TextFormat("(A-S)    npc speed: %.0f px/sec", npc_speed), 265, 40, 18, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("(D-F)    npc max time reaction: %.01f secs.", npc_max_time_react), 265, 60, 18, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("(G-H)    player speed: %.0f px/sec", paddle_speed), 265, 80, 18, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("(J-K)    ball speed: %.0f px/sec", ball_speed), 265, 100, 18, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("DEBUG MODE", ball_speed), 265 - 120, 480 - 40, 18, LEVEL_TEXT_COLOR);
+#endif
     DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
     DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);

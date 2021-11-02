@@ -3,7 +3,6 @@
 
 #include "raylib.h"
 
-
 //
 // CONSTANTS
 //
@@ -33,8 +32,11 @@
     (Color) { 249, 168, 117, 255 } // Color
 #define SCORE_TEXT_SIZE 144        // px
 
+#ifndef DEBUG
 #define POINTS_PER_LEVEL 3 // int
-
+#else
+#define POINTS_PER_LEVEL 1000 // int
+#endif
 
 //
 // TYPE DEFINITIONS
@@ -45,7 +47,6 @@ typedef struct Entity
     Rectangle bounds;
     Vector2 velocity; // px/sec
 } Entity;
-
 
 //
 // FUNCTIONS
@@ -68,7 +69,6 @@ void event_paddle_bounce();
 void event_npc_score();
 void event_player_score();
 
-
 //
 // GLOBALS
 //
@@ -76,5 +76,15 @@ extern Entity player;
 extern Entity npc;
 extern Entity ball;
 extern Vector2 ball_destination;
+
+//
+// DEBUG
+//
+
+#ifdef DEBUG
+extern float npc_speed;
+extern float npc_max_time_react;
+extern float ball_speed;
+#endif
 
 #endif

@@ -36,10 +36,10 @@ float npc_ease(float percent, float x0, float x1);
 // LOCAL VARIABLES
 //
 
-float npc_speed;
+float npc_speed = 0;
 float npc_time_react;
 float npc_min_time_react;
-float npc_max_time_react;
+float npc_max_time_react = 0;
 float ball_prev_vel_x;
 float ball_prev_vel_y;
 Npc_state npc_state;
@@ -119,8 +119,9 @@ void check_npc_event(float delta_time)
     // wall bounce
     if (ball_prev_vel_y * ball.velocity.y < 0)
     {
-        npc_state = THINKING;
-        npc_time_react = npc_get_time_react();
+        //npc_state = THINKING;
+        //npc_time_react = npc_get_time_react();
+        npc_state = READY;
     }
 
     // player paddle bounce
