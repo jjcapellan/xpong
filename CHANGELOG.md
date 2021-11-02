@@ -1,4 +1,4 @@
-## WIP
+## v1.0.0-alpha
 * Added: fx sounds.
 * Added: npc reaction time.
 * Change: npc behavior based on ball position prediction.
