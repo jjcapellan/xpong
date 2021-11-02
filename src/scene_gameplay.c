@@ -1,18 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 
-//
-// GLOBALS
-//
-
-Entity player;
-Entity npc;
-Entity ball;
-
-#ifdef DEBUG
-float npc_speed;
-float npc_max_time_react;
-#endif
 
 //
 // LOCAL VARIABLES
@@ -22,7 +10,6 @@ Vector2 score_size;
 Vector2 level_text_size;
 int npc_score;
 float paddle_speed;
-float ball_speed;
 int player_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level;
@@ -44,7 +31,6 @@ Sound fx_bounce2;
 Sound fx_point;
 Sound fx_level;
 Font font;
-Texture2D texture_atlas; // Global
 
 //
 // FUNCTIONS
@@ -186,9 +172,11 @@ void event_npc_score()
 
 void new_level() // TODO
 {
-    ball_speed *= 1.10;
+    //ball_speed *= 1.10;
     //npc_speed_factor *= 1.15;
-    paddle_speed *= 1.10;
+    //paddle_speed *= 1.10;
+
+    //TODO
 }
 
 void check_gameover()

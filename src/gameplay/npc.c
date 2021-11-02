@@ -7,8 +7,6 @@
 //
 
 Entity npc = (Entity){0};
-Entity ball;
-Vector2 ball_destination;
 
 //
 // LOCAL TYPES
@@ -119,8 +117,6 @@ void check_npc_event(float delta_time)
     // wall bounce
     if (ball_prev_vel_y * ball.velocity.y < 0)
     {
-        //npc_state = THINKING;
-        //npc_time_react = npc_get_time_react();
         npc_state = READY;
     }
 

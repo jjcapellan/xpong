@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
+#include <math.h>
 
 //
 //LOCAL FUNCTIONS
@@ -9,6 +10,7 @@ float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
 void collision_ball_player();
 void collision_ball_npc();
+void set_ball_destination();
 
 //
 // GLOBALS
@@ -16,8 +18,6 @@ void collision_ball_npc();
 
 Entity ball = {0};
 Vector2 ball_destination = {0};
-Entity player;
-Entity npc;
 
 //
 // LOCAL VARIABLES
