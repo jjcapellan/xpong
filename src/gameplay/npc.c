@@ -29,7 +29,6 @@ float entity_get_y_center(Entity entity);
 float npc_get_time_react();
 float npc_ease(float percent, float x0, float x1);
 
-
 //
 // LOCAL VARIABLES
 //
@@ -84,8 +83,8 @@ void npc_update(float delta_time)
     }
 
     if (npc_current_target.x != 0 && easing_elapsed_time < easing_duration && ball.velocity.x > 0)
-    {      
-        
+    {
+
         easing_elapsed_time += delta_time;
         npc.bounds.y = npc_ease(easing_elapsed_time / easing_duration, easing_x0, easing_x1);
     }
@@ -131,7 +130,6 @@ void check_npc_event(float delta_time)
     ball_prev_vel_y = ball.velocity.y;
 }
 
-
 // Easing function inOutCubic
 float npc_ease(float percent, float x0, float x1)
 {
@@ -146,7 +144,7 @@ void npc_set_current_target()
     if (ball_destination.y < 4)
         ball_destination.y = 4 + npc.bounds.height / 2;
     if (ball_destination.y > (480 - 4))
-        ball_destination.y = (480 - 4) - npc.bounds.height;
+        ball_destination.y = (480 - 4) - npc.bounds.height / 2;
 
     npc_current_target.y = ball_destination.y;
     easing_x0 = npc.bounds.y;
