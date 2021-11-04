@@ -1,3 +1,6 @@
+## WIP
+* Fix: npc wrong behavior when ball goes bottom corner.
+
 ## v1.0.0-alpha
 * Added: fx sounds.
 * Added: npc reaction time.
