@@ -10,7 +10,7 @@ void scene_title_init()
 
 void scene_title_update()
 {
-    if (IsKeyDown(KEY_SPACE))
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         scene_transition_init(SCENE_TITLE, SCENE_GAMEPLAY);
     }
