@@ -69,14 +69,6 @@ void scene_gameplay_update(float delta_time)
 
 void input_update()
 {
-    if (IsKeyDown(KEY_UP))
-    {
-        player.velocity.y = -paddle_speed;
-    }
-    else if (IsKeyDown(KEY_DOWN))
-    {
-        player.velocity.y = paddle_speed;
-    }
 
 #ifdef DEBUG
     // NPC SPEED
@@ -106,20 +98,6 @@ void input_update()
         npc_max_time_react = 1.2f;
     if (npc_max_time_react < 0)
         npc_max_time_react = 0;
-
-    // PLAYER SPEED
-    if (IsKeyReleased(KEY_H))
-    {
-        paddle_speed += 10;
-    }
-    else if (IsKeyReleased(KEY_G))
-    {
-        paddle_speed -= 10;
-    }
-    if (paddle_speed > 1000)
-        paddle_speed = 1000;
-    if (paddle_speed < 100)
-        paddle_speed = 100;
 
     // BALL SPEED
     if (IsKeyReleased(KEY_K))
@@ -196,7 +174,6 @@ void scene_gameplay_draw()
 #ifdef DEBUG
     DrawText(TextFormat("(A-S)    npc speed: %.0f px/sec", npc_speed), 265, 40, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("(D-F)    npc max time reaction: %.01f secs.", npc_max_time_react), 265, 60, 18, SCORE_TEXT_COLOR);
-    DrawText(TextFormat("(G-H)    player speed: %.0f px/sec", paddle_speed), 265, 80, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("(J-K)    ball speed: %.0f px/sec", ball_speed), 265, 100, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("DEBUG MODE", ball_speed), 265 - 120, 480 - 40, 18, LEVEL_TEXT_COLOR);
 #endif
