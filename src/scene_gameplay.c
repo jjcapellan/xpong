@@ -44,6 +44,8 @@ void scene_gameplay_init()
     font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
     SetTextureFilter(font.texture, 0);
 
+    HideCursor();
+
     player_init();
     paddle_speed = PADDLE_SPEED;
 
