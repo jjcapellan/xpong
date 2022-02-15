@@ -6,6 +6,7 @@ Texture2D texture_title;
 void scene_title_init()
 {
     texture_title = LoadTexture("assets/screen_title.png");
+    ShowCursor();
 }
 
 void scene_title_update()

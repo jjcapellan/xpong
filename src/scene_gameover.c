@@ -6,6 +6,7 @@ Texture2D texture_gameover;
 void scene_gameover_init()
 {
     texture_gameover = LoadTexture("assets/screen_gameover.png");
+    ShowCursor();
 }
 
 void scene_gameover_update()
