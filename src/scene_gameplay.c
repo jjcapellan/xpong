@@ -45,6 +45,7 @@ void scene_gameplay_init()
     SetTextureFilter(font.texture, 0);
 
     HideCursor();
+    DisableCursor();
 
     player_init();
     paddle_speed = PADDLE_SPEED;

@@ -16,7 +16,7 @@ void player_init()
 
 void player_update(float deltaTime)
 {
-    player.bounds.y = GetMouseY() - paddle_half;
+    player.bounds.y = (player.bounds.y + GetMouseDelta().y);
 
     if (player.bounds.y < 4)
     {
