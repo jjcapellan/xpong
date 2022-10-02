@@ -1,4 +1,4 @@
 #!/bin/bash
 cd dist/desktop/
-./pong.out
+./xpong.out
 cd ../../
