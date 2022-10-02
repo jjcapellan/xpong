@@ -1,21 +1,21 @@
 .PHONY: all clean
 
-PROJECT_NAME          ?= pong
-RAYLIB_VERSION        ?= 3.8.0
-RAYLIB_PATH           ?= /home/juanjo/Desarrollo/cprojects/libs/raylib
+PROJECT_NAME          ?= xpong
+RAYLIB_VERSION        ?= 4.2.0
+RAYLIB_PATH           ?= ../raylib
 
 # Path to raylib headers (*.h)
 RAYLIB_HEADERS_PATH   ?= $(RAYLIB_PATH)/src
 
 # Path to raylib compilations
-RAYLIB_BIN_PATH       ?= $(RAYLIB_PATH)/bin
+RAYLIB_BIN_PATH       ?= /usr/local/lib
 # Paths to raylib compilations
-RAYLIB_DESKTOP_STATIC ?= $(RAYLIB_BIN_PATH)/libraylib_desktop.a
-RAYLIB_DESKTOP_SHARED ?= $(RAYLIB_BIN_PATH)/libraylib_desktop.so
+RAYLIB_DESKTOP_STATIC ?= $(RAYLIB_BIN_PATH)/libraylib.a
+RAYLIB_DESKTOP_SHARED ?= $(RAYLIB_BIN_PATH)/libraylib.so.4.2.0
 RAYLIB_WEB_STATIC     ?= $(RAYLIB_BIN_PATH)/libraylib_web.a
 
 # Project paths
-PROJECT_ROOT_PATH = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PROJECT_ROOT_PATH = .
 PROJECT_SOURCE_PATH   ?= ./src
 PROJECT_INCLUDE_PATH  ?= ./include
 PROJECT_ASSETS_PATH   = ./dist/desktop/assets@/assets
