@@ -26,6 +26,14 @@
 #define WORLD_BOUNDS \
     (Rectangle) { 0, 4, 640, 480 - 8 } // {px,px,px,px}
 
+#define PARTICLE_FRAME_RECT \
+    (Rectangle) { 0, 480, 6, 6 }  // {px,px,px,px} Rectangle frame on sprite sheet
+#define PARTICLE_MIN_SCALE 0.3    // float, min scale based on ball size
+#define PARTICLE_MAX_SCALE 0.7    // float, max scale based on ball size
+#define PARTICLE_MAX_DURATION 0.5 // seconds
+#define PARTICLE_MIN_DURATION 0.2 // seconds
+#define PARTICLES_MAX_NUMBER 6    // int
+
 #define SCORE_TEXT_COLOR \
     (Color) { 249, 168, 117, 80 } // Color
 #define LEVEL_TEXT_COLOR \
@@ -48,6 +56,17 @@ typedef struct Entity
     Vector2 velocity; // px/sec
 } Entity;
 
+typedef struct Particle
+{
+    Rectangle frame_rect;
+    Vector2 position;
+    Vector2 velocity;
+    float rotation;
+    float scale;
+    float time;
+    bool alive;
+} Particle;
+
 //
 // FUNCTIONS
 //
@@ -64,6 +83,10 @@ void ball_init();
 void ball_update(float delta_time);
 void ball_reset(bool is_player);
 
+void particles_init();
+void particles_update(float delta_time);
+void particles_reset(Vector2 position);
+
 void event_wall();
 void event_paddle_bounce();
 void event_npc_score();
@@ -76,6 +99,7 @@ extern Entity player;
 extern Entity npc;
 extern Entity ball;
 extern Vector2 ball_destination;
+extern Particle particles[];
 
 //
 // DEBUG

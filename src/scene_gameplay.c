@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 
-
 //
 // LOCAL VARIABLES
 //
@@ -54,6 +53,8 @@ void scene_gameplay_init()
 
     ball_init();
 
+    particles_init();
+
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
     level_text_size = MeasureTextEx(font, "L 0", 24, -4);
 
@@ -68,6 +69,7 @@ void scene_gameplay_update(float delta_time)
     player_update(delta_time);
     npc_update(delta_time);
     ball_update(delta_time);
+    particles_update(delta_time);
 };
 
 void input_update()
@@ -126,6 +128,7 @@ void event_wall()
 void event_paddle_bounce()
 {
     PlaySound(fx_bounce1);
+    particles_reset((Vector2){ball.bounds.x, ball.bounds.y});
 }
 
 void event_player_score()
@@ -153,11 +156,11 @@ void event_npc_score()
 
 void new_level() // TODO
 {
-    //ball_speed *= 1.10;
-    //npc_speed_factor *= 1.15;
-    //paddle_speed *= 1.10;
+    // ball_speed *= 1.10;
+    // npc_speed_factor *= 1.15;
+    // paddle_speed *= 1.10;
 
-    //TODO
+    // TODO
 }
 
 void check_gameover()
@@ -171,6 +174,14 @@ void check_gameover()
 void scene_gameplay_draw()
 {
     DrawTextureRec(texture_atlas, FIELD_FRAME_RECT, (Vector2){0, 0}, WHITE);
+    for (int i = 0; i < 6; i++)
+    {
+        if (particles[i].alive == true)
+        {
+            DrawTexturePro(texture_atlas, PARTICLE_FRAME_RECT, (Rectangle){particles[i].position.x, particles[i].position.y, 6 * particles[i].scale, 6 * particles[i].scale}, (Vector2){0.5, 0.5}, particles[i].rotation, WHITE);
+        }
+    }
+
     DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
