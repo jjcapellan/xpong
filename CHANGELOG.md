@@ -1,7 +1,8 @@
 ## WIP
 * Fix: npc wrong behavior when ball goes bottom corner.
 * Deleted: player keyboard control.
-* Added: player mouse control
+* Added: player mouse control.
+* Added: particles effect.
 * Updated to raylib 4.2.0
 
 ## v1.0.0-alpha
