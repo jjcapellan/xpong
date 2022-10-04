@@ -12,6 +12,7 @@ float paddle_speed;
 int player_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level;
+bool is_pause = false;
 
 //
 // LOCAL FUNCTIONS
@@ -66,14 +67,29 @@ void scene_gameplay_init()
 void scene_gameplay_update(float delta_time)
 {
     input_update();
-    player_update(delta_time);
-    npc_update(delta_time);
-    ball_update(delta_time);
-    particles_update(delta_time);
+    if (is_pause == false)
+    {
+        player_update(delta_time);
+        npc_update(delta_time);
+        ball_update(delta_time);
+        particles_update(delta_time);
+    }
 };
 
 void input_update()
 {
+
+    if (IsKeyReleased(KEY_P))
+    {
+        if (is_pause == false)
+        {
+            is_pause = true;
+        }
+        else
+        {
+            is_pause = false;
+        }
+    }
 
 #ifdef DEBUG
     // NPC SPEED
