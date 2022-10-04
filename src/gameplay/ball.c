@@ -3,7 +3,7 @@
 #include <math.h>
 
 //
-//LOCAL FUNCTIONS
+// LOCAL FUNCTIONS
 //
 
 float vector2_get_angle(Vector2 v);
@@ -82,6 +82,11 @@ void ball_update(float deltaTime)
     {
         event_player_score();
     }
+}
+
+void ball_draw()
+{
+    DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
 }
 
 void collision_ball_player()
@@ -167,7 +172,6 @@ void ball_reset(bool isPlayer)
         npc_set_current_target();
         npc_reset();
     }
-    
 }
 
 float vector2_get_angle(Vector2 v)

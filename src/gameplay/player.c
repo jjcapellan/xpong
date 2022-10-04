@@ -27,3 +27,8 @@ void player_update(float deltaTime)
         player.bounds.y = SCREEN_HEIGHT - 4 - player.bounds.height;
     }
 }
+
+void player_draw()
+{
+    DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
+}

@@ -172,3 +172,8 @@ void npc_reset()
     npc_state = THINKING;
     npc_time_react = npc_get_time_react();
 }
+
+void npc_draw()
+{
+    DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
+}

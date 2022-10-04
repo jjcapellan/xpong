@@ -101,15 +101,18 @@ typedef struct Level
 
 void player_init();
 void player_update(float delta_time);
+void player_draw();
 
 void npc_init();
 void npc_update(float delta_time);
 void npc_set_current_target();
 void npc_reset();
+void npc_draw();
 
 void ball_init();
 void ball_update(float delta_time);
 void ball_reset(bool is_player);
+void ball_draw();
 
 void particles_init();
 void particles_update(float delta_time);

@@ -219,9 +219,9 @@ void scene_gameplay_draw()
     DrawText(TextFormat("(J-K)    ball speed: %.0f px/sec", ball_speed), 265, 100, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("DEBUG MODE", ball_speed), 265 - 120, 480 - 40, 18, LEVEL_TEXT_COLOR);
 #endif
-    DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
-    DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
-    DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
+    player_draw();
+    npc_draw();
+    ball_draw();
 };
 void scene_gameplay_destroy()
 {
