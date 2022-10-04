@@ -8,7 +8,6 @@
 Vector2 score_size;
 Vector2 level_text_size;
 int npc_score;
-float paddle_speed;
 int player_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level = 0;
@@ -52,7 +51,6 @@ void scene_gameplay_init()
     init_levels();
 
     player_init();
-    paddle_speed = PADDLE_SPEED;
 
     npc_init();
 
@@ -66,10 +64,6 @@ void scene_gameplay_init()
     player_score = 0;
     npc_score = 0;
     level = 0;
-
-    npc_speed = levels[0].npc_speed;
-    npc_max_time_react = levels[0].reaction_time;
-    ball_speed = levels[0].ball_speed;
 }
 
 void scene_gameplay_update(float delta_time)
@@ -186,7 +180,7 @@ void init_levels()
     levels[7] = (Level){NPC_SPEED_LEVEL_8, NPC_REACTION_TIME_LEVEL_8, BALL_SPEED_LEVEL_8};
 }
 
-void new_level() // TODO
+void new_level()
 {
     player_score = 0;
     npc_score = 0;
@@ -195,11 +189,6 @@ void new_level() // TODO
     npc_speed = levels[level].npc_speed;
     npc_max_time_react = levels[level].reaction_time;
     ball_speed = levels[level].ball_speed;
-    // ball_speed *= 1.10;
-    // npc_speed_factor *= 1.15;
-    // paddle_speed *= 1.10;
-
-    // TODO
 }
 
 void check_gameover()

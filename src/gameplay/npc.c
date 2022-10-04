@@ -30,10 +30,14 @@ float npc_get_time_react();
 float npc_ease(float percent, float x0, float x1);
 
 //
+// GLOBAAL VARIABLES
+//
+float npc_speed = 0;
+
+//
 // LOCAL VARIABLES
 //
 
-float npc_speed = 0;
 float npc_time_react;
 float npc_min_time_react;
 float npc_max_time_react = 0;
@@ -58,11 +62,11 @@ void npc_init()
     npc.bounds = (Rectangle){SCREEN_WIDTH - (width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - height / 2, width, height};
     npc.velocity = (Vector2){0, 0};
 
-    npc_speed = PADDLE_SPEED;
+    npc_speed = NPC_SPEED_LEVEL_1;
 
     npc_state = READY;
     npc_min_time_react = NPC_MIN_TIME_REACTION;
-    npc_max_time_react = NPC_MAX_TIME_REACTION;
+    npc_max_time_react = NPC_REACTION_TIME_LEVEL_1;
     npc_time_react = npc_get_time_react();
     ball_prev_vel_x = 0;
     ball_prev_vel_y = 0;

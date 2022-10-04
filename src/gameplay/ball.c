@@ -32,7 +32,7 @@ Rectangle world_bounds = WORLD_BOUNDS;
 
 void ball_init()
 {
-    ball_speed = BALL_SPEED;
+    ball_speed = BALL_SPEED_LEVEL_1;
     ball_reset(false);
 }
 
