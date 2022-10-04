@@ -11,8 +11,9 @@ int npc_score;
 float paddle_speed;
 int player_score;
 int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
-int level;
+int level = 0;
 bool is_pause = false;
+Level levels[8] = {0};
 
 //
 // LOCAL FUNCTIONS
@@ -21,6 +22,7 @@ bool is_pause = false;
 void input_update();
 void check_gameover();
 void new_level();
+void init_levels();
 
 //
 // RESOURCES
@@ -47,6 +49,8 @@ void scene_gameplay_init()
     HideCursor();
     DisableCursor();
 
+    init_levels();
+
     player_init();
     paddle_speed = PADDLE_SPEED;
 
@@ -61,7 +65,11 @@ void scene_gameplay_init()
 
     player_score = 0;
     npc_score = 0;
-    level = 1;
+    level = 0;
+
+    npc_speed = levels[0].npc_speed;
+    npc_max_time_react = levels[0].reaction_time;
+    ball_speed = levels[0].ball_speed;
 }
 
 void scene_gameplay_update(float delta_time)
@@ -153,10 +161,6 @@ void event_player_score()
     player_score++;
     if (player_score > POINTS_PER_LEVEL)
     {
-        level++;
-        player_score = 0;
-        npc_score = 0;
-        PlaySound(fx_level);
         new_level();
     }
     ball_reset(true);
@@ -170,8 +174,27 @@ void event_npc_score()
     ball_reset(false);
 }
 
+void init_levels()
+{
+    levels[0] = (Level){NPC_SPEED_LEVEL_1, NPC_REACTION_TIME_LEVEL_1, BALL_SPEED_LEVEL_1};
+    levels[1] = (Level){NPC_SPEED_LEVEL_2, NPC_REACTION_TIME_LEVEL_2, BALL_SPEED_LEVEL_2};
+    levels[2] = (Level){NPC_SPEED_LEVEL_3, NPC_REACTION_TIME_LEVEL_3, BALL_SPEED_LEVEL_3};
+    levels[3] = (Level){NPC_SPEED_LEVEL_4, NPC_REACTION_TIME_LEVEL_4, BALL_SPEED_LEVEL_4};
+    levels[4] = (Level){NPC_SPEED_LEVEL_5, NPC_REACTION_TIME_LEVEL_5, BALL_SPEED_LEVEL_5};
+    levels[5] = (Level){NPC_SPEED_LEVEL_6, NPC_REACTION_TIME_LEVEL_6, BALL_SPEED_LEVEL_6};
+    levels[6] = (Level){NPC_SPEED_LEVEL_7, NPC_REACTION_TIME_LEVEL_7, BALL_SPEED_LEVEL_7};
+    levels[7] = (Level){NPC_SPEED_LEVEL_8, NPC_REACTION_TIME_LEVEL_8, BALL_SPEED_LEVEL_8};
+}
+
 void new_level() // TODO
 {
+    player_score = 0;
+    npc_score = 0;
+    PlaySound(fx_level);
+    level++;
+    npc_speed = levels[level].npc_speed;
+    npc_max_time_react = levels[level].reaction_time;
+    ball_speed = levels[level].ball_speed;
     // ball_speed *= 1.10;
     // npc_speed_factor *= 1.15;
     // paddle_speed *= 1.10;
@@ -198,7 +221,7 @@ void scene_gameplay_draw()
         }
     }
 
-    DrawTextEx(font, TextFormat("L %i", level), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
+    DrawTextEx(font, TextFormat("L %i", level + 1), (Vector2){320 - level_text_size.x / 2, 18}, 24, -4, LEVEL_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
 #ifdef DEBUG

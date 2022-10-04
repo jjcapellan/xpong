@@ -11,16 +11,40 @@
     (Rectangle) { 0, 0, 640, 480 } // {px,px,px,px} Rectangle frame on sprite sheet
 
 #define PADDLE_FRAME_RECT \
-    (Rectangle) { 0, 480, 12, 72 } // {px,px,px,px} Rectangle frame on sprite sheet
-#define PADDLE_H_MARGIN 12         // px, horizontal margin to screen border
-#define PADDLE_MAX_ANGLE 40        // degrees, angle added to ball velocity vector when collide paddle edges
-#define PADDLE_SPEED 280           // px/sec
-#define NPC_MIN_TIME_REACTION 0.0  // seconds
-#define NPC_MAX_TIME_REACTION 0.3  // seconds
+    (Rectangle) { 0, 480, 12, 72 }    // {px,px,px,px} Rectangle frame on sprite sheet
+#define PADDLE_H_MARGIN 12            // px, horizontal margin to screen border
+#define PADDLE_MAX_ANGLE 40           // degrees, angle added to ball velocity vector when collide paddle edges
+#define PADDLE_SPEED 280              // px/sec
+#define NPC_SPEED_LEVEL_1 220         // px/sec
+#define NPC_SPEED_LEVEL_2 260         // px/sec
+#define NPC_SPEED_LEVEL_3 310         // px/sec
+#define NPC_SPEED_LEVEL_4 360         // px/sec
+#define NPC_SPEED_LEVEL_5 400         // px/sec
+#define NPC_SPEED_LEVEL_6 430         // px/sec
+#define NPC_SPEED_LEVEL_7 470         // px/sec
+#define NPC_SPEED_LEVEL_8 500         // px/sec
+#define NPC_MIN_TIME_REACTION 0.0     // seconds
+#define NPC_MAX_TIME_REACTION 0.3     // seconds
+#define NPC_REACTION_TIME_LEVEL_1 0.3 // seconds
+#define NPC_REACTION_TIME_LEVEL_2 0.3 // seconds
+#define NPC_REACTION_TIME_LEVEL_3 0.3 // seconds
+#define NPC_REACTION_TIME_LEVEL_4 0.3 // seconds
+#define NPC_REACTION_TIME_LEVEL_5 0.2 // seconds
+#define NPC_REACTION_TIME_LEVEL_6 0.2 // seconds
+#define NPC_REACTION_TIME_LEVEL_7 0.1 // seconds
+#define NPC_REACTION_TIME_LEVEL_8 0.1 // seconds
 
 #define BALL_FRAME_RECT \
     (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
 #define BALL_SPEED 480              // px/sec
+#define BALL_SPEED_LEVEL_1 480      // px/sec
+#define BALL_SPEED_LEVEL_2 560      // px/sec
+#define BALL_SPEED_LEVEL_3 640      // px/sec
+#define BALL_SPEED_LEVEL_4 720      // px/sec
+#define BALL_SPEED_LEVEL_5 780      // px/sec
+#define BALL_SPEED_LEVEL_6 840      // px/sec
+#define BALL_SPEED_LEVEL_7 920      // px/sec
+#define BALL_SPEED_LEVEL_8 980      // px/sec
 #define BALL_SPEED_START 190        // px/sec
 #define BALL_MAX_ANGLE 65           // degrees
 #define WORLD_BOUNDS \
@@ -67,6 +91,13 @@ typedef struct Particle
     bool alive;
 } Particle;
 
+typedef struct Level
+{
+    float npc_speed;
+    float reaction_time;
+    float ball_speed;
+} Level;
+
 //
 // FUNCTIONS
 //
@@ -105,10 +136,8 @@ extern Particle particles[];
 // DEBUG
 //
 
-#ifdef DEBUG
 extern float npc_speed;
 extern float npc_max_time_react;
 extern float ball_speed;
-#endif
 
 #endif
