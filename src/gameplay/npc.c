@@ -33,7 +33,7 @@ float npc_ease(float percent, float x0, float x1);
 //
 // GLOBAAL VARIABLES
 //
-
+float npc_max_error = 0.0;
 //
 // LOCAL VARIABLES
 //
@@ -62,6 +62,7 @@ void npc_init()
     npc.bounds = (Rectangle){SCREEN_WIDTH - (width + PADDLE_H_MARGIN), SCREEN_HEIGHT / 2 - height / 2, width, height};
 
     npc_state = READY;
+    npc_max_error = NPC_ERRORS_LEVEL_1;
     npc_min_time_react = NPC_MIN_TIME_REACTION;
     npc_max_time_react = NPC_REACTION_TIME_LEVEL_1;
     npc_time_react = 0.3;
@@ -149,7 +150,7 @@ void npc_set_current_target()
 
     easing_x0 = npc.bounds.y;
     easing_x1 = npc_current_target.y - npc.bounds.height / 2;
-    error_p = ((float)abs(easing_x1 - easing_x0) / (float)SCREEN_HEIGHT) * 0.3;
+    error_p = ((float)abs(easing_x1 - easing_x0) / (float)SCREEN_HEIGHT) * npc_max_error;
     printf("error_p: %f\n", error_p);
     if (drand48() < error_p)
     {
