@@ -1,6 +1,8 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 //
 // LOCAL FUNCTIONS
@@ -11,6 +13,7 @@ void vector2_set_angle(Vector2 *v, float angle, float length);
 void collision_ball_player();
 void collision_ball_npc();
 void set_ball_destination();
+bool isPair(int number);
 
 //
 // GLOBALS
@@ -46,14 +49,12 @@ void ball_update(float deltaTime)
     {
         ball.bounds.y = world_bounds.y + world_bounds.height - ball.bounds.height;
         ball.velocity.y *= -1;
-        set_ball_destination();
         event_wall();
     }
     if (ball.bounds.y < world_bounds.y)
     {
         ball.bounds.y = world_bounds.y;
         ball.velocity.y *= -1;
-        set_ball_destination();
         event_wall();
     }
 
@@ -68,6 +69,7 @@ void ball_update(float deltaTime)
 
         if (CheckCollisionRecs(ball.bounds, npc.bounds))
         {
+            printf("ball.y: %f\n", ball.bounds.y);
             collision_ball_npc();
             event_paddle_bounce();
         }
@@ -80,6 +82,7 @@ void ball_update(float deltaTime)
     }
     if (ball.bounds.x > SCREEN_WIDTH)
     {
+        // printf("ball.y: %f\n", ball.bounds.y);
         event_player_score();
     }
 }
@@ -141,12 +144,48 @@ void collision_ball_npc()
 }
 
 // Calcs ball.y for ball.x = npc.x if there were not wall bounces
+// Rect equation --> y - y0 = m * (x - x0)
 void set_ball_destination()
 {
-    float m, x, y;
+
+    float y, y0, x, x0, m, bounces, md;
+    y0 = ball.bounds.y;
+    x0 = ball.bounds.x;
     m = ball.velocity.y / ball.velocity.x;
     x = world_bounds.x + world_bounds.width - PADDLE_H_MARGIN;
-    y = ball.bounds.y - m * ball.bounds.x + m * x;
+    y = y0 + m * (x - x0);
+
+    if (m > 0)
+    {
+        bounces = y / world_bounds.height;
+    }
+    if (m < 0)
+    {
+        bounces = (abs(y - y0) + world_bounds.height - y0) / world_bounds.height;
+    }
+    //printf("b: %f\n", bounces);
+
+    if (bounces > 1)
+    {
+        bool bounces_is_pair = isPair(abs((int)bounces));
+        md = (int)y % (int)world_bounds.height;
+        if (m < 0 && bounces_is_pair == true)
+        {
+            y = world_bounds.y + world_bounds.height + md;
+        }
+        if (m < 0 && bounces_is_pair == false)
+        {
+            y = world_bounds.y - md;
+        }
+        if (m > 0 && bounces_is_pair == true)
+        {
+            y = world_bounds.y + md;
+        }
+        if (m > 0 && bounces_is_pair == false)
+        {
+            y = world_bounds.y + world_bounds.height - md;
+        }
+    }
 
     ball_destination.x = x;
     ball_destination.y = y;
@@ -189,4 +228,9 @@ void vector2_set_angle(Vector2 *v, float angle, float length)
 {
     v->x = cosf(angle) * length;
     v->y = sinf(angle) * length;
+}
+
+bool isPair(int number)
+{
+    return number % 2 == 0;
 }
