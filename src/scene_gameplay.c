@@ -101,12 +101,8 @@ void input_update()
     }
     else if (IsKeyReleased(KEY_A))
     {
-        npc_speed -= 10;
+        //
     }
-    if (npc_speed > 1000)
-        npc_speed = 1000;
-    if (npc_speed < 100)
-        npc_speed = 100;
 
     // NPC TIME REACTION
     if (IsKeyReleased(KEY_F))
@@ -186,7 +182,6 @@ void new_level()
     npc_score = 0;
     PlaySound(fx_level);
     level++;
-    npc_speed = levels[level].npc_speed;
     npc_max_time_react = levels[level].reaction_time;
     ball_speed = levels[level].ball_speed;
 }
@@ -214,7 +209,7 @@ void scene_gameplay_draw()
     DrawTextEx(font, TextFormat("%02i", player_score), (Vector2){320 - 40 - score_size.x, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
     DrawTextEx(font, TextFormat("%02i", npc_score), (Vector2){320 + 40, score_text_y}, SCORE_TEXT_SIZE, 0, SCORE_TEXT_COLOR);
 #ifdef DEBUG
-    DrawText(TextFormat("(A-S)    npc speed: %.0f px/sec", npc_speed), 265, 40, 18, SCORE_TEXT_COLOR);
+    DrawText(TextFormat("(A-S)    not_used: %.0f px/sec", 0), 265, 40, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("(D-F)    npc max time reaction: %.01f secs.", npc_max_time_react), 265, 60, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("(J-K)    ball speed: %.0f px/sec", ball_speed), 265, 100, 18, SCORE_TEXT_COLOR);
     DrawText(TextFormat("DEBUG MODE", ball_speed), 265 - 120, 480 - 40, 18, LEVEL_TEXT_COLOR);

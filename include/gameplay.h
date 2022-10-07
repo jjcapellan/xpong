@@ -131,7 +131,6 @@ extern Entity npc;
 extern Entity ball;
 extern Vector2 ball_destination;
 extern Particle particles[];
-extern float npc_speed;
 extern float npc_max_time_react;
 extern float ball_speed;
 
