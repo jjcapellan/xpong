@@ -151,6 +151,11 @@ void npc_set_current_target()
     easing_x0 = npc.bounds.y;
     easing_x1 = npc_current_target.y - npc.bounds.height / 2;
     error_p = ((float)abs(easing_x1 - easing_x0) / (float)SCREEN_HEIGHT) * npc_max_error;
+    // If its neutral ball then npc shouldn't fail.
+    if (ball.bounds.x == (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
+    {
+        error_p = 0;
+    }
     printf("error_p: %f\n", error_p);
     if (drand48() < error_p)
     {
