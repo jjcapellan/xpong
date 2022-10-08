@@ -2,6 +2,7 @@
 #include "gameplay.h"
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 #ifdef DEBUG
 #include <stdio.h>
 #endif
