@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 //
@@ -69,7 +68,6 @@ void ball_update(float deltaTime)
 
         if (CheckCollisionRecs(ball.bounds, npc.bounds))
         {
-            printf("ball.y: %f\n", ball.bounds.y);
             collision_ball_npc();
             event_paddle_bounce();
         }
@@ -82,7 +80,6 @@ void ball_update(float deltaTime)
     }
     if (ball.bounds.x > SCREEN_WIDTH)
     {
-        // printf("ball.y: %f\n", ball.bounds.y);
         event_player_score();
     }
 }
@@ -163,7 +160,6 @@ void set_ball_destination()
     {
         bounces = (abs(y - y0) + world_bounds.height - y0) / world_bounds.height;
     }
-    //printf("b: %f\n", bounces);
 
     if (bounces > 1)
     {
