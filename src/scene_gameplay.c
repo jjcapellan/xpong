@@ -148,6 +148,10 @@ void new_level()
     npc_score = 0;
     PlaySound(fx_level);
     level++;
+    if (level > 7)
+    {
+        level = 7;
+    }
     npc_max_error = levels[level].npc_max_error;
     ball_speed = levels[level].ball_speed;
 }
