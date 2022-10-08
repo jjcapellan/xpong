@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "gameplay.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 //
 // GLOBALS
@@ -27,8 +26,8 @@ typedef enum Npc_states
 void npc_update(float delta_time);
 void check_npc_event(float delta_time);
 float entity_get_y_center(Entity entity);
-float npc_get_time_react();
 float npc_ease(float percent, float x0, float x1);
+bool isError(float y0, float y1);
 
 //
 // GLOBAAL VARIABLES
@@ -110,12 +109,6 @@ void check_npc_event(float delta_time)
         return;
     }
 
-    // wall bounce
-    /*if (ball_prev_vel_y * ball.velocity.y < 0)
-    {
-        npc_state = READY;
-    }*/
-
     // player paddle bounce
     if (ball_prev_vel_x * ball.velocity.x < 0 && ball.velocity.x > 0)
     {
@@ -137,37 +130,22 @@ float npc_ease(float percent, float x0, float x1)
 
 void npc_set_current_target()
 {
-    float error_p;
-    bool isError = false;
 
     npc_current_target.x = ball_destination.x;
     npc_current_target.y = ball_destination.y;
 
     easing_x0 = npc.bounds.y;
     easing_x1 = npc_current_target.y - npc.bounds.height / 2;
-    error_p = ((float)abs(easing_x1 - easing_x0) / (float)SCREEN_HEIGHT) * npc_max_error;
-    // If its neutral ball then npc shouldn't fail.
-    if (ball.bounds.x == (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
-    {
-        error_p = 0;
-    }
-    printf("error_p: %f\n", error_p);
-    if (drand48() < error_p)
-    {
-        isError = true;
-        printf("isError: %f\n", error_p);
-    }
-    if (isError == true)
+
+    if (isError(easing_x0, easing_x1) == true)
     {
         if (easing_x1 > easing_x0)
         {
-            easing_x1 = npc_current_target.y - npc.bounds.height - 2 * ball.bounds.height; //(npc.bounds.height*0.75 + drand48() * 10);
-            printf("easingX1_1\n");
+            easing_x1 = npc_current_target.y - npc.bounds.height - 2 * ball.bounds.height;
         }
         else
         {
             easing_x1 += (npc.bounds.height * 0.75 + drand48() * 10);
-            printf("easingX1_2\n");
         }
     }
     easing_duration = (npc.bounds.x - ball.bounds.x) / ball.velocity.x;
@@ -177,6 +155,28 @@ void npc_set_current_target()
 float entity_get_y_center(Entity entity)
 {
     return entity.bounds.y + entity.bounds.height;
+}
+
+bool isError(float y0, float y1)
+{
+    float fail_rate;
+
+    // If its neutral ball then npc shouldn't fail.
+    if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
+    {
+        fail_rate = ((float)abs(y1 - y0) / (float)SCREEN_HEIGHT) * npc_max_error;
+    }
+    else
+    {
+        fail_rate = 0;
+    }
+
+    if (drand48() < fail_rate)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void npc_reset()
