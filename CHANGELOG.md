@@ -1,10 +1,11 @@
-## WIP
-* Fix: npc wrong behavior when ball goes bottom corner.
+## v1.0.0-beta
 * Deleted: player keyboard control.
 * Added: player mouse control.
 * Added: particles effect.
-* Updated to raylib 4.2.0
 * Added: new npc ai.
+* Fix: no sound using latest version of emscripten
+* Updated to raylib 4.2.0
+
 
 ## v1.0.0-alpha
 * Added: fx sounds.
