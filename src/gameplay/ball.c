@@ -140,7 +140,7 @@ void collision_ball_npc()
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
 }
 
-// Calcs ball.y for ball.x = npc.x if there were not wall bounces
+// Calcs final ball position
 // Rect equation --> y - y0 = m * (x - x0)
 void set_ball_destination()
 {

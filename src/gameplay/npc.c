@@ -137,6 +137,7 @@ float npc_ease(float percent, float x0, float x1)
     return x0 + (x1 - x0) * factor;
 }
 
+// sets the next position to go, and adjusts the motion parameters.
 void npc_set_current_target()
 {
 
@@ -172,7 +173,7 @@ bool isError(float y0, float y1)
 {
     float fail_rate;
 
-    // If its neutral ball then npc shouldn't fail.
+    // If its serving ball then npc shouldn't fail.
     if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
     {
         float gap = fabs(y1 - y0);
