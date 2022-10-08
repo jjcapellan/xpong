@@ -11,26 +11,18 @@
     (Rectangle) { 0, 0, 640, 480 } // {px,px,px,px} Rectangle frame on sprite sheet
 
 #define PADDLE_FRAME_RECT \
-    (Rectangle) { 0, 480, 12, 72 }    // {px,px,px,px} Rectangle frame on sprite sheet
-#define PADDLE_H_MARGIN 12            // px, horizontal margin to screen border
-#define PADDLE_MAX_ANGLE 40           // degrees, angle added to ball velocity vector when collide paddle edges
-#define NPC_ERRORS_LEVEL_1 0.40       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_2 0.35       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_3 0.30       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_4 0.25       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_5 0.20       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_6 0.15       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_7 0.10       // max npc probability to fail
-#define NPC_ERRORS_LEVEL_8 0.05       // max npc probability to fail
-#define NPC_MIN_TIME_REACTION 0.0     // seconds
-#define NPC_REACTION_TIME_LEVEL_1 0.3 // seconds
-#define NPC_REACTION_TIME_LEVEL_2 0.3 // seconds
-#define NPC_REACTION_TIME_LEVEL_3 0.3 // seconds
-#define NPC_REACTION_TIME_LEVEL_4 0.3 // seconds
-#define NPC_REACTION_TIME_LEVEL_5 0.2 // seconds
-#define NPC_REACTION_TIME_LEVEL_6 0.2 // seconds
-#define NPC_REACTION_TIME_LEVEL_7 0.1 // seconds
-#define NPC_REACTION_TIME_LEVEL_8 0.1 // seconds
+    (Rectangle) { 0, 480, 12, 72 } // {px,px,px,px} Rectangle frame on sprite sheet
+#define PADDLE_H_MARGIN 12         // px, horizontal margin to screen border
+#define PADDLE_MAX_ANGLE 40        // degrees, angle added to ball velocity vector when collide paddle edges
+#define NPC_ERRORS_LEVEL_1 0.40    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_2 0.35    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_3 0.30    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_4 0.25    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_5 0.20    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_6 0.15    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_7 0.10    // max npc probability to fail
+#define NPC_ERRORS_LEVEL_8 0.05    // max npc probability to fail
+#define NPC_REACTION_TIME 0.1      // seconds
 
 #define BALL_FRAME_RECT \
     (Rectangle) { 12, 480, 12, 12 } // {px,px,px,px} Rectangle frame on sprite sheet
@@ -91,7 +83,6 @@ typedef struct Particle
 typedef struct Level
 {
     float npc_max_error; // Max probability to fail (0 - 1).
-    float reaction_time;
     float ball_speed;
 } Level;
 
@@ -132,7 +123,6 @@ extern Entity ball;
 extern Vector2 ball_destination;
 extern Particle particles[];
 extern float npc_max_error;
-extern float npc_max_time_react;
 extern float ball_speed;
 
 #endif

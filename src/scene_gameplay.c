@@ -166,14 +166,14 @@ void event_npc_score()
 
 void init_levels()
 {
-    levels[0] = (Level){NPC_ERRORS_LEVEL_1, NPC_REACTION_TIME_LEVEL_1, BALL_SPEED_LEVEL_1};
-    levels[1] = (Level){NPC_ERRORS_LEVEL_2, NPC_REACTION_TIME_LEVEL_2, BALL_SPEED_LEVEL_2};
-    levels[2] = (Level){NPC_ERRORS_LEVEL_3, NPC_REACTION_TIME_LEVEL_3, BALL_SPEED_LEVEL_3};
-    levels[3] = (Level){NPC_ERRORS_LEVEL_4, NPC_REACTION_TIME_LEVEL_4, BALL_SPEED_LEVEL_4};
-    levels[4] = (Level){NPC_ERRORS_LEVEL_5, NPC_REACTION_TIME_LEVEL_5, BALL_SPEED_LEVEL_5};
-    levels[5] = (Level){NPC_ERRORS_LEVEL_6, NPC_REACTION_TIME_LEVEL_6, BALL_SPEED_LEVEL_6};
-    levels[6] = (Level){NPC_ERRORS_LEVEL_7, NPC_REACTION_TIME_LEVEL_7, BALL_SPEED_LEVEL_7};
-    levels[7] = (Level){NPC_ERRORS_LEVEL_8, NPC_REACTION_TIME_LEVEL_8, BALL_SPEED_LEVEL_8};
+    levels[0] = (Level){NPC_ERRORS_LEVEL_1, BALL_SPEED_LEVEL_1};
+    levels[1] = (Level){NPC_ERRORS_LEVEL_2, BALL_SPEED_LEVEL_2};
+    levels[2] = (Level){NPC_ERRORS_LEVEL_3, BALL_SPEED_LEVEL_3};
+    levels[3] = (Level){NPC_ERRORS_LEVEL_4, BALL_SPEED_LEVEL_4};
+    levels[4] = (Level){NPC_ERRORS_LEVEL_5, BALL_SPEED_LEVEL_5};
+    levels[5] = (Level){NPC_ERRORS_LEVEL_6, BALL_SPEED_LEVEL_6};
+    levels[6] = (Level){NPC_ERRORS_LEVEL_7, BALL_SPEED_LEVEL_7};
+    levels[7] = (Level){NPC_ERRORS_LEVEL_8, BALL_SPEED_LEVEL_8};
 }
 
 void new_level()
@@ -183,7 +183,6 @@ void new_level()
     PlaySound(fx_level);
     level++;
     npc_max_error = levels[level].npc_max_error;
-    npc_max_time_react = levels[level].reaction_time;
     ball_speed = levels[level].ball_speed;
 }
 

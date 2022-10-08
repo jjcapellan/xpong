@@ -38,13 +38,11 @@ float npc_max_error = 0.0;
 // LOCAL VARIABLES
 //
 
-float npc_time_react;
-float npc_min_time_react;
-float npc_max_time_react = 0;
 float ball_prev_vel_x;
 float ball_prev_vel_y;
 Npc_state npc_state;
 Vector2 npc_current_target;
+float npc_time_react = NPC_REACTION_TIME;
 float easing_duration;
 float easing_elapsed_time;
 float easing_x0;
@@ -63,9 +61,6 @@ void npc_init()
 
     npc_state = READY;
     npc_max_error = NPC_ERRORS_LEVEL_1;
-    npc_min_time_react = NPC_MIN_TIME_REACTION;
-    npc_max_time_react = NPC_REACTION_TIME_LEVEL_1;
-    npc_time_react = 0.3;
     ball_prev_vel_x = 0;
     ball_prev_vel_y = 0;
 }
@@ -125,7 +120,7 @@ void check_npc_event(float delta_time)
     if (ball_prev_vel_x * ball.velocity.x < 0 && ball.velocity.x > 0)
     {
         npc_state = THINKING;
-        npc_time_react = npc_get_time_react(); // npc_get_time_react();
+        npc_time_react = NPC_REACTION_TIME;
     }
 
     ball_prev_vel_x = ball.velocity.x;
@@ -184,15 +179,10 @@ float entity_get_y_center(Entity entity)
     return entity.bounds.y + entity.bounds.height;
 }
 
-float npc_get_time_react()
-{
-    return 0.1; //(drand48() * (npc_max_time_react - npc_min_time_react) + npc_min_time_react);
-}
-
 void npc_reset()
 {
     npc_state = THINKING;
-    npc_time_react = npc_get_time_react();
+    npc_time_react = NPC_REACTION_TIME;
 }
 
 void npc_draw()
