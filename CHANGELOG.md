@@ -4,6 +4,7 @@
 * Added: player mouse control.
 * Added: particles effect.
 * Updated to raylib 4.2.0
+* Added: new npc ai.
 
 ## v1.0.0-alpha
 * Added: fx sounds.
