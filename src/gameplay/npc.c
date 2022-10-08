@@ -1,6 +1,8 @@
 #include "defs.h"
 #include "gameplay.h"
+#include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 //
 // GLOBALS
@@ -28,6 +30,7 @@ void check_npc_event(float delta_time);
 float entity_get_y_center(Entity entity);
 float npc_ease(float percent, float x0, float x1);
 bool isError(float y0, float y1);
+void npc_set_fail_time();
 
 //
 // GLOBAAL VARIABLES
@@ -136,20 +139,19 @@ void npc_set_current_target()
 
     easing_x0 = npc.bounds.y;
     easing_x1 = npc_current_target.y - npc.bounds.height / 2;
+    easing_duration = (npc.bounds.x - ball.bounds.x) / ball.velocity.x;
 
     if (isError(easing_x0, easing_x1) == true)
     {
-        if (easing_x1 > easing_x0)
-        {
-            easing_x1 = npc_current_target.y - npc.bounds.height - 2 * ball.bounds.height;
-        }
-        else
-        {
-            easing_x1 += (npc.bounds.height * 0.75 + drand48() * 10);
-        }
+        npc_set_fail_time();
     }
-    easing_duration = (npc.bounds.x - ball.bounds.x) / ball.velocity.x;
+
     easing_elapsed_time = 0;
+}
+
+void npc_set_fail_time()
+{
+    easing_duration += 0.8;
 }
 
 float entity_get_y_center(Entity entity)
@@ -164,7 +166,7 @@ bool isError(float y0, float y1)
     // If its neutral ball then npc shouldn't fail.
     if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
     {
-        fail_rate = ((float)abs(y1 - y0) / (float)SCREEN_HEIGHT) * npc_max_error;
+        fail_rate = (fabs(y1 - y0) / (float)SCREEN_HEIGHT) * npc_max_error;
     }
     else
     {
