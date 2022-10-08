@@ -2,7 +2,9 @@
 #include "gameplay.h"
 #include <math.h>
 #include <stdlib.h>
+#ifdef DEBUG
 #include <stdio.h>
+#endif
 
 //
 // GLOBALS
@@ -36,6 +38,7 @@ void npc_set_fail_time();
 // GLOBAAL VARIABLES
 //
 float npc_max_error = 0.0;
+float npc_timing_error = 0.0;
 //
 // LOCAL VARIABLES
 //
@@ -45,6 +48,7 @@ float ball_prev_vel_y;
 Npc_state npc_state;
 Vector2 npc_current_target;
 float npc_time_react = NPC_REACTION_TIME;
+float bonus_distance = NPC_ERRORS_DISTANCE_BONUS * SCREEN_HEIGHT;
 float easing_duration;
 float easing_elapsed_time;
 float easing_x0;
@@ -65,6 +69,8 @@ void npc_init()
     npc_max_error = NPC_ERRORS_LEVEL_1;
     ball_prev_vel_x = 0;
     ball_prev_vel_y = 0;
+
+    srand48(time(NULL));
 }
 
 void npc_update(float delta_time)
@@ -143,6 +149,9 @@ void npc_set_current_target()
 
     if (isError(easing_x0, easing_x1) == true)
     {
+#ifdef DEBUG
+        printf("is fail\n");
+#endif
         npc_set_fail_time();
     }
 
@@ -151,7 +160,7 @@ void npc_set_current_target()
 
 void npc_set_fail_time()
 {
-    easing_duration += 0.8;
+    easing_duration *= NPC_TIMING_ERROR_MULTIPLIER;
 }
 
 float entity_get_y_center(Entity entity)
@@ -166,7 +175,15 @@ bool isError(float y0, float y1)
     // If its neutral ball then npc shouldn't fail.
     if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
     {
-        fail_rate = (fabs(y1 - y0) / (float)SCREEN_HEIGHT) * npc_max_error;
+        float gap = fabs(y1 - y0);
+        fail_rate = (gap / (float)SCREEN_HEIGHT) * npc_max_error;
+        if (gap > bonus_distance)
+        {
+            fail_rate += NPC_ERRORS_BONUS;
+        }
+#ifdef DEBUG
+        printf("y gap: %f\n", gap);
+#endif
     }
     else
     {

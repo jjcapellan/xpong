@@ -92,11 +92,12 @@ void input_update()
             is_pause = false;
         }
     }
-    #ifdef DEBUG
-    if(IsKeyReleased(KEY_L)){
+#ifdef DEBUG
+    if (IsKeyReleased(KEY_L))
+    {
         new_level();
     }
-    #endif
+#endif
 }
 
 void event_wall()
