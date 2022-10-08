@@ -7,12 +7,12 @@
 // LOCAL FUNCTIONS
 //
 
+void collision_ball_npc();
+void collision_ball_player();
+bool isPair(int number);
+void set_ball_destination();
 float vector2_get_angle(Vector2 v);
 void vector2_set_angle(Vector2 *v, float angle, float length);
-void collision_ball_player();
-void collision_ball_npc();
-void set_ball_destination();
-bool isPair(int number);
 
 //
 // GLOBALS
@@ -32,10 +32,37 @@ Rectangle world_bounds = WORLD_BOUNDS;
 // FUNCTIONS
 //
 
+void ball_draw()
+{
+    DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
+}
+
 void ball_init()
 {
     ball_speed = BALL_SPEED_LEVEL_1;
     ball_reset(false);
+}
+
+void ball_reset(bool isPlayer)
+{
+    ball.frame_rect = BALL_FRAME_RECT;
+    int ball_size = ball.frame_rect.width;
+    ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
+    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
+    vector2_set_angle(&ball.velocity, angle, BALL_SPEED_START);
+    if (isPlayer)
+    {
+        ball.velocity.x *= -1;
+        set_ball_destination();
+        npc_set_current_target();
+        npc_reset();
+    }
+    else
+    {
+        set_ball_destination();
+        npc_set_current_target();
+        npc_reset();
+    }
 }
 
 void ball_update(float deltaTime)
@@ -84,10 +111,9 @@ void ball_update(float deltaTime)
     }
 }
 
-void ball_draw()
-{
-    DrawTextureRec(texture_atlas, ball.frame_rect, (Vector2){ball.bounds.x, ball.bounds.y}, WHITE);
-}
+//
+// LOCAL FUNCTIONS
+//
 
 void collision_ball_player()
 {
@@ -140,6 +166,11 @@ void collision_ball_npc()
     vector2_set_angle(&ball.velocity, angle1 * DEG2RAD, ball_speed);
 }
 
+bool isPair(int number)
+{
+    return number % 2 == 0;
+}
+
 // Calcs final ball position
 // Rect equation --> y - y0 = m * (x - x0)
 void set_ball_destination()
@@ -187,28 +218,6 @@ void set_ball_destination()
     ball_destination.y = y;
 }
 
-void ball_reset(bool isPlayer)
-{
-    ball.frame_rect = BALL_FRAME_RECT;
-    int ball_size = ball.frame_rect.width;
-    ball.bounds = (Rectangle){SCREEN_WIDTH / 2 - ball_size / 2, SCREEN_HEIGHT / 2 - ball_size / 2, ball_size, ball_size};
-    float angle = (float)GetRandomValue(135, 225) * DEG2RAD;
-    vector2_set_angle(&ball.velocity, angle, BALL_SPEED_START);
-    if (isPlayer)
-    {
-        ball.velocity.x *= -1;
-        set_ball_destination();
-        npc_set_current_target();
-        npc_reset();
-    }
-    else
-    {
-        set_ball_destination();
-        npc_set_current_target();
-        npc_reset();
-    }
-}
-
 float vector2_get_angle(Vector2 v)
 {
     float angle = atan2f(v.y, v.x) * RAD2DEG;
@@ -224,9 +233,4 @@ void vector2_set_angle(Vector2 *v, float angle, float length)
 {
     v->x = cosf(angle) * length;
     v->y = sinf(angle) * length;
-}
-
-bool isPair(int number)
-{
-    return number % 2 == 0;
 }

@@ -27,18 +27,20 @@ typedef enum Npc_states
 // LOCAL FUNCTIONS
 //
 
-void npc_update(float delta_time);
 void check_npc_event(float delta_time);
 float entity_get_y_center(Entity entity);
-float npc_ease(float percent, float x0, float x1);
 bool isError(float y0, float y1);
+float npc_ease(float percent, float x0, float x1);
 void npc_set_fail_time();
+void npc_update(float delta_time);
 
 //
 // GLOBAAL VARIABLES
 //
+
 float npc_max_error = 0.0;
 float npc_timing_error = 0.0;
+
 //
 // LOCAL VARIABLES
 //
@@ -58,6 +60,11 @@ float easing_x1;
 // FUNCTIONS
 //
 
+void npc_draw()
+{
+    DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
+}
+
 void npc_init()
 {
     npc.frame_rect = PADDLE_FRAME_RECT;
@@ -71,6 +78,12 @@ void npc_init()
     ball_prev_vel_y = 0;
 
     srand48(time(NULL));
+}
+
+void npc_reset()
+{
+    npc_state = THINKING;
+    npc_time_react = NPC_REACTION_TIME;
 }
 
 void npc_update(float delta_time)
@@ -104,6 +117,10 @@ void npc_update(float delta_time)
     }
 }
 
+//
+// LOCAL FUNCTIONS
+//
+
 void check_npc_event(float delta_time)
 {
 
@@ -127,6 +144,42 @@ void check_npc_event(float delta_time)
 
     ball_prev_vel_x = ball.velocity.x;
     ball_prev_vel_y = ball.velocity.y;
+}
+
+float entity_get_y_center(Entity entity)
+{
+    return entity.bounds.y + entity.bounds.height;
+}
+
+// determines if this ball will be failed
+bool isError(float y0, float y1)
+{
+    float fail_rate;
+
+    // If its serving ball then npc shouldn't fail.
+    if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
+    {
+        float gap = fabs(y1 - y0);
+        fail_rate = (gap / (float)SCREEN_HEIGHT) * npc_max_error;
+        if (gap > bonus_distance)
+        {
+            fail_rate += NPC_ERRORS_BONUS;
+        }
+#ifdef DEBUG
+        printf("y gap: %f\n", gap);
+#endif
+    }
+    else
+    {
+        fail_rate = 0;
+    }
+
+    if (drand48() < fail_rate)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 // Easing function inOutCubic
@@ -162,50 +215,4 @@ void npc_set_current_target()
 void npc_set_fail_time()
 {
     easing_duration *= NPC_TIMING_ERROR_MULTIPLIER;
-}
-
-float entity_get_y_center(Entity entity)
-{
-    return entity.bounds.y + entity.bounds.height;
-}
-
-bool isError(float y0, float y1)
-{
-    float fail_rate;
-
-    // If its serving ball then npc shouldn't fail.
-    if (ball.bounds.x != (SCREEN_WIDTH / 2 - ball.bounds.width / 2))
-    {
-        float gap = fabs(y1 - y0);
-        fail_rate = (gap / (float)SCREEN_HEIGHT) * npc_max_error;
-        if (gap > bonus_distance)
-        {
-            fail_rate += NPC_ERRORS_BONUS;
-        }
-#ifdef DEBUG
-        printf("y gap: %f\n", gap);
-#endif
-    }
-    else
-    {
-        fail_rate = 0;
-    }
-
-    if (drand48() < fail_rate)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-void npc_reset()
-{
-    npc_state = THINKING;
-    npc_time_react = NPC_REACTION_TIME;
-}
-
-void npc_draw()
-{
-    DrawTextureRec(texture_atlas, npc.frame_rect, (Vector2){npc.bounds.x, npc.bounds.y}, WHITE);
 }

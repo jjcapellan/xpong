@@ -5,6 +5,11 @@ Entity player = (Entity){0}; // global
 
 int paddle_half = 0;
 
+void player_draw()
+{
+    DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
+}
+
 void player_init()
 {
     player.frame_rect = PADDLE_FRAME_RECT;
@@ -26,9 +31,4 @@ void player_update(float deltaTime)
     {
         player.bounds.y = SCREEN_HEIGHT - 4 - player.bounds.height;
     }
-}
-
-void player_draw()
-{
-    DrawTextureRec(texture_atlas, player.frame_rect, (Vector2){player.bounds.x, player.bounds.y}, WHITE);
 }
