@@ -3,9 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 //
 // GLOBALS
@@ -56,6 +53,11 @@ float easing_duration;
 float easing_elapsed_time;
 float easing_x0;
 float easing_x1;
+
+#ifdef DEBUG
+int touches = 0;
+int errors = 0;
+#endif
 
 //
 // FUNCTIONS
@@ -167,7 +169,7 @@ bool isError(float y0, float y1)
             fail_rate += NPC_ERRORS_BONUS;
         }
 #ifdef DEBUG
-        printf("y gap: %f\n", gap);
+        touches++;
 #endif
     }
     else
@@ -205,7 +207,7 @@ void npc_set_current_target()
     if (isError(easing_x0, easing_x1) == true)
     {
 #ifdef DEBUG
-        printf("is fail\n");
+        errors++;
 #endif
         npc_set_fail_time();
     }

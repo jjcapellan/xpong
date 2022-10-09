@@ -127,5 +127,10 @@ extern Vector2 ball_destination;
 extern Particle particles[];
 extern float npc_max_error;
 extern float ball_speed;
+#ifdef DEBUG
+extern int touches;
+extern int points;
+extern int errors;
+#endif
 
 #endif

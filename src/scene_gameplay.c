@@ -1,5 +1,8 @@
 #include "defs.h"
 #include "gameplay.h"
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 
 //
 // LOCAL VARIABLES
@@ -13,6 +16,14 @@ int score_text_y = (SCREEN_HEIGHT / 2) - (SCORE_TEXT_SIZE / 2);
 int level = 0;
 bool is_pause = false;
 Level levels[8] = {0};
+
+//
+// GLOBAL VARIABLES
+//
+
+#ifdef DEBUG
+int points = 0;
+#endif
 
 //
 // LOCAL FUNCTIONS
@@ -115,6 +126,9 @@ void event_player_score()
 {
     PlaySound(fx_point);
     player_score++;
+#ifdef DEBUG
+    points++;
+#endif
     if (player_score > POINTS_PER_LEVEL)
     {
         new_level();
@@ -148,6 +162,13 @@ void new_level()
     npc_score = 0;
     PlaySound(fx_level);
     level++;
+#ifdef DEBUG
+    float errors_rate = (float)errors/(float)touches;
+    printf("level: %i touches: %i points: %i errors: %i errors_rate: %f\n", level, touches, points, errors, errors_rate);
+    touches = 0;
+    points = 0;
+    errors = 0;
+#endif
     if (level > 7)
     {
         level = 7;
