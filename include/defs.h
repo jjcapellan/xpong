@@ -38,4 +38,12 @@ void scene_transition_init(int source, int target);
 void scene_transition_update(float deltaTime);
 void scene_transition_draw();
 
+// shared variables
+extern int player_total_score;
+extern int player_max_level;
+extern int npc_total_score;
+
+// shared resources
+extern Font font;
+
 #endif

@@ -21,6 +21,9 @@ Level levels[8] = {0};
 // GLOBAL VARIABLES
 //
 
+int player_total_score = 0;
+int player_max_level = 0;
+int npc_total_score = 0;
 #ifdef DEBUG
 int points = 0;
 #endif
@@ -42,7 +45,7 @@ Sound fx_bounce1;
 Sound fx_bounce2;
 Sound fx_point;
 Sound fx_level;
-Font font;
+//Font font;
 
 //
 // FUNCTIONS
@@ -53,7 +56,7 @@ void scene_gameplay_init()
     fx_bounce2 = LoadSound("assets/bounce2.wav");
     fx_point = LoadSound("assets/point.wav");
     fx_level = LoadSound("assets/level.wav");
-    font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
+    //font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
     SetTextureFilter(font.texture, 0);
 
     HideCursor();
@@ -71,6 +74,10 @@ void scene_gameplay_init()
 
     score_size = MeasureTextEx(font, "00", SCORE_TEXT_SIZE, 0);
     level_text_size = MeasureTextEx(font, "L 0", 24, -4);
+
+    player_total_score = 0;
+    player_max_level = 0;
+    npc_total_score = 0;
 
     player_score = 0;
     npc_score = 0;
@@ -158,12 +165,15 @@ void init_levels()
 
 void new_level()
 {
+    player_total_score += player_score;
+    npc_total_score += npc_score;
+
     player_score = 0;
     npc_score = 0;
     PlaySound(fx_level);
     level++;
 #ifdef DEBUG
-    float errors_rate = (float)errors/(float)touches;
+    float errors_rate = (float)errors / (float)touches;
     printf("level: %i touches: %i points: %i errors: %i errors_rate: %f\n", level, touches, points, errors, errors_rate);
     touches = 0;
     points = 0;
@@ -181,6 +191,10 @@ void check_gameover()
 {
     if (npc_score > POINTS_PER_LEVEL)
     {
+        player_total_score += player_score;
+        npc_total_score += npc_score;
+        player_max_level = level + 1;
+
         scene_transition_init(SCENE_GAMEPLAY, SCENE_GAMEOVER);
     }
 }
@@ -210,6 +224,5 @@ void scene_gameplay_destroy()
     UnloadSound(fx_bounce1);
     UnloadSound(fx_bounce2);
     UnloadSound(fx_point);
-    UnloadSound(fx_level);
-    UnloadFont(font);
+    UnloadSound(fx_level);    
 };

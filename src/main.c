@@ -10,6 +10,7 @@ void unload_current_scene();
 
 enum Scene current_scene = SCENE_TITLE;
 Texture2D texture_atlas;
+Font font;
 
 int main()
 {
@@ -21,6 +22,7 @@ int main()
 
     InitAudioDevice();
 
+    font = LoadFontEx("assets/font_silkscreen/slkscr.ttf", 36, 0, 98);
     texture_atlas = LoadTexture("assets/atlas640x640_pong.png");
 
     scene_title_init();
@@ -38,6 +40,7 @@ int main()
     // Unload resources
     unload_current_scene();
     UnloadTexture(texture_atlas);
+    UnloadFont(font);
     CloseAudioDevice(); // Close audio context
     CloseWindow();      // Close window and OpenGL context
 
