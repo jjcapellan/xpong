@@ -126,7 +126,7 @@ LDFLAGS = -L$(RAYLIB_BIN_PATH)
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 	ifeq ($(PLATFORM_OS),WINDOWS)
 		# resource file contains windows executable icon and properties
-		LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
+		# LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
 		# -Wl,--subsystem,windows hides the console window
 		ifeq ($(BUILD_MODE), RELEASE)
 			LDFLAGS += -Wl,--subsystem,windows
@@ -138,12 +138,12 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 	ifeq ($(PLATFORM_OS),WINDOWS)
-		LDLIBS = $(RAYLIB_LIB) -lopengl32 -lgdi32 -lwinmm
+		LDLIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
 		LDLIBS += -static -lpthread
 	endif
 	ifeq ($(PLATFORM_OS),LINUX)
 		# NOTE: Required packages: libegl1-mesa-dev
-		LDLIBS = $(RAYLIB_LIB) -lGL -lm -lpthread -ldl -lrt
+		LDLIBS = -lraylib -lGL -lm -lpthread -ldl -lrt
 
 		# On X11 requires also below libraries
 		LDLIBS += -lX11
@@ -221,7 +221,7 @@ $(EXE):$(OBJS)
 # Deletes object files
 clean:
 ifeq ($(PLATFORM_OS),WINDOWS)
-	del obj/*.o /s
+	rm -fv ./obj/*.o
 endif
 ifeq ($(PLATFORM_OS),LINUX)
 	rm -fv ./obj/*.o

@@ -80,7 +80,8 @@ void npc_init()
     ball_prev_vel_x = 0;
     ball_prev_vel_y = 0;
 
-    srand48(time(NULL));
+    //srand48(time(NULL));
+    srand(time(NULL));
 }
 
 void npc_reset()
@@ -177,7 +178,7 @@ bool isError(float y0, float y1)
         fail_rate = 0;
     }
 
-    if (drand48() < fail_rate)
+    if (((float)rand()/(float)RAND_MAX) < fail_rate)
     {
         return true;
     }

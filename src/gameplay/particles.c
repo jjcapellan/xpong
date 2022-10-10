@@ -28,8 +28,8 @@ void particles_reset(Vector2 position)
         p->velocity = (Vector2){(float)(GetRandomValue(1, 200) - 100), (float)(GetRandomValue(1, 200) - 100)};
         p->position = (Vector2){position.x, position.y};
         p->rotation = (float)GetRandomValue(1, 360);
-        p->scale = PARTICLE_MIN_SCALE + drand48() * (PARTICLE_MAX_SCALE - PARTICLE_MIN_SCALE);
-        p->time = PARTICLE_MIN_DURATION + drand48() * (PARTICLE_MAX_DURATION - PARTICLE_MIN_DURATION);
+        p->scale = PARTICLE_MIN_SCALE + ((float)rand()/(float)RAND_MAX) * (PARTICLE_MAX_SCALE - PARTICLE_MIN_SCALE);
+        p->time = PARTICLE_MIN_DURATION + ((float)rand()/(float)RAND_MAX) * (PARTICLE_MAX_DURATION - PARTICLE_MIN_DURATION);
         p->alive = true;
     }
 }
