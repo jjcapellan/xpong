@@ -17,6 +17,8 @@ int main()
     //---------------------------------------------------------
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE);
 
+    SetWindowState(FLAG_VSYNC_HINT);
+
     InitAudioDevice();
 
     texture_atlas = LoadTexture("assets/atlas640x640_pong.png");
