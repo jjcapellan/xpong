@@ -2,9 +2,9 @@
 #define DEFS_H
 #include "raylib.h"
 
-#define SCREEN_TITLE "Game Title" // window title
-#define SCREEN_WIDTH 640          // px
-#define SCREEN_HEIGHT 480         // px
+#define SCREEN_TITLE "XPONG" // window title
+#define SCREEN_WIDTH 640     // px
+#define SCREEN_HEIGHT 480    // px
 
 #define TRANSITION_DURATION 0.8 // secs, transition duration between scenes
 
