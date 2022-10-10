@@ -8,10 +8,6 @@
 
 #define TRANSITION_DURATION 0.8 // secs, transition duration between scenes
 
-
-
-
-
 enum Scene
 {
     SCENE_TITLE = 0,
@@ -38,7 +34,7 @@ void scene_gameover_update();
 void scene_gameover_draw();
 void scene_gameover_destroy();
 
-void scene_transition_init();
+void scene_transition_init(int source, int target);
 void scene_transition_update(float deltaTime);
 void scene_transition_draw();
 
